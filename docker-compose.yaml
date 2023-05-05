@@ -1,0 +1,9 @@
+version: "3"
+services:
+    font:
+        build: .
+        volumes:
+            - .:/home/font
+        container_name: font
+        working_dir: /home/font
+        command: make -j4
