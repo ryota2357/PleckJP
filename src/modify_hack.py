@@ -25,6 +25,9 @@ def main():
     # Use IBMPlexSansJP glyph
     util.font_clear_glyph(font, 0x266a)  # ♪
 
+    # Use Hack Nerd Font glyph
+    util.font_clear_glyph(font, 0xe0a0, 0xe0b3)  # Private Use Area
+
     modify_0(font)
     modify_m(font)
 

@@ -4,19 +4,21 @@ import util
 import properties as P
 from datetime import datetime
 
-if len(sys.argv) != 5:
+if len(sys.argv) != 6:
     raise ValueError("Invalid argument")
 
 FONT_EN_TTF = sys.argv[1]
 FONT_JP_TTF = sys.argv[2]
-FONT_STYLE = sys.argv[3]
-BUILD_FILE = sys.argv[4]
+FONT_NF_TTF = sys.argv[3]
+FONT_STYLE = sys.argv[4]
+BUILD_FILE = sys.argv[5]
 
 
 def main():
     font = new_font()
     font.mergeFonts(FONT_EN_TTF)
     font.mergeFonts(FONT_JP_TTF)
+    font.mergeFonts(FONT_NF_TTF)
 
     # print("Status:", hex(font.validate()))
     font.selection.all()
