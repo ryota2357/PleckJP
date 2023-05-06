@@ -20,6 +20,7 @@ def main():
     mat = psMat.skew(rot_rad)
     font.selection.all()
     font.transform(mat)
+    font.round()
     font.selection.none()
 
     util.font_into_file(font, BUILD_FILE)

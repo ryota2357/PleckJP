@@ -51,6 +51,7 @@ def resize_all_width(font):
         glyph.transform(fix_scale_mat)
         scaled.add(codepoint)
         glyph.width = new_width
+    font.round()
     font.selection.none()
 
 

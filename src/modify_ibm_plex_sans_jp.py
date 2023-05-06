@@ -33,6 +33,9 @@ def main():
     util.glyph_riseze_width(font[0x2109], const.EM // 2)  # ℉
     util.glyph_riseze_width(font[0x2121], const.EM // 2)  # ℡
     util.glyph_riseze_width(font[0x212B], const.EM // 2)  # Å
+    font.selection.all()
+    font.round()
+    font.selection.none()
 
     util.font_into_file(font, BUILD_FILE)
     print(FONT_FILE, " -> ", BUILD_FILE)
@@ -45,6 +48,7 @@ def set_all_em(font):
     font.ascent = round(float(const.ASCENT) / const.EM * old_em)
     font.descent = round(float(const.DESCENT) / const.EM * old_em)
     font.em = const.EM
+    font.selection.none()
 
 
 def resize_all_scale(font):
@@ -75,6 +79,7 @@ def resize_all_scale(font):
         else:
             glyph.transform(mat)
             glyph.width = const.EM
+    font.round()
     font.selection.none()
 
 
