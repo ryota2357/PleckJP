@@ -1,9 +1,9 @@
 version: "3"
 services:
-    font:
+    pleckjp:
         build: .
         volumes:
-            - .:/home/font
-        container_name: font
-        working_dir: /home/font
+            - .:/home/pleckjp
+        container_name: pleckjp
+        working_dir: /home/pleckjp
         command: make -j4

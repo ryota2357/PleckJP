@@ -1,12 +1,34 @@
 FROM ubuntu:22.10
 
-ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y \
+    build-essential gettext cmake ninja-build git ccache python3-dev \
+    libtool \
+    libjpeg-dev \
+    libtiff5-dev \
+    libpng-dev \
+    libfreetype6-dev \
+    libgif-dev \
+    libgtk-3-dev \
+    libxml2-dev \
+    libpango1.0-dev \
+    libcairo2-dev \
+    libspiro-dev \
+    libpython3-dev
 
-# https://github.com/fontforge/fontforge/blob/master/INSTALL.md
-RUN apt update && \
-    apt upgrade -y && \
-    apt install -y build-essential gettext git cmake ninja-build python3-dev \
-                   libjpeg-dev libtiff5-dev libpng-dev libfreetype6-dev libgif-dev libgtk-3-dev libxml2-dev libpango1.0-dev libcairo2-dev libspiro-dev
+# Set time zoon
+RUN ln -fs /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+
+# Set locale
+ENV LANG ja_JP.UTF-8
+RUN apt-get install -y locales && locale-gen ja_JP.UTF-8
+ENV LANG="ja_JP.UTF-8" \
+    LANGUAGE="ja_JP:en" \
+    LC_ALL="ja_JP.UTF-8"
+
+# Set python3
+ENV PYTHON=python3
+
+# Install fontforge
 RUN git clone https://github.com/fontforge/fontforge
 RUN cd fontforge     && \
     mkdir build      && \
@@ -15,5 +37,5 @@ RUN cd fontforge     && \
     ninja            && \
     ninja install
 
-# python tool
-RUN apt install -y python3-fontforge
+# Add python module for fontforge
+ENV PYTHONPATH=/usr/local/lib/python3/dist-packages/
