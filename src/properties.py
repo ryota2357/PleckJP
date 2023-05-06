@@ -1,16 +1,19 @@
 FAMILY = "PleckJP"
-VERSION = "0.0.2"
+VERSION = "0.1.0"
 ENCODING = 'UnicodeFull'
 
 COPYRIGHT = "\n".join([
+    "[PleckJP]",
+    "Copyright (c) 2023 ryota2357",
+    ""
     "[IBM Plex]",
     "Copyright © 2017 IBM Corp.",
     "",
     "[Hack]",
     "Copyright (c) 2018 Source Foundry Authors",
     "",
-    "[PleckJP]",
-    "Copyright (c) 2023 ryota2357",
+    "[Nerd Fonts]",
+    "opyright (c) 2014, Ryan L McIntyre",
 ])
 
 ASCENT = 1556
