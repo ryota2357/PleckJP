@@ -8,18 +8,34 @@ ERROR_LOG_FILE := error.txt
 MODIFY_HACK_SCRIPT := src/modify_hack.py
 MODIFY_IBMPLEX_SCRIPT := src/modify_ibm_plex_sans_jp.py
 MODIFY_HACK_NERD_SCRIPT := src/modify_hack_nerd.py
+MAKE_ITALIC_SCRIPT := src/make_italic.py
 MERGE_SCRIPT := src/merge.py
 
 all: $(CACHE_DIR) $(BUILD_DIR) \
-	$(BUILD_DIR)/PleckJP-Regular.ttf $(BUILD_DIR)/PleckJP-Bold.ttf
+	$(BUILD_DIR)/PleckJP-Regular.ttf $(BUILD_DIR)/PleckJP-Bold.ttf $(BUILD_DIR)/PleckJP-Italic.ttf $(BUILD_DIR)/PleckJP-BoldItalic.ttf
 	@echo "Completed."
 
 # Do not renove intermediate files
 .SECONDARY: $(wildcard *.ttf)
 
+# Merge
 $(BUILD_DIR)/PleckJP-%.ttf: $(CACHE_DIR)/modified-Hack-%.ttf $(CACHE_DIR)/modified-IBMPlexSansJP-%.ttf $(CACHE_DIR)/modified-HackNerdFont.ttf $(MERGE_SCRIPT)
 	@python3 $(MERGE_SCRIPT) $(word 1, $^) $(word 2, $^) $(word 3, $^) $* $@ 2>> $(ERROR_LOG_FILE)
 
+# Italic / BoldItalic
+$(CACHE_DIR)/modified-Hack-Italic.ttf: $(CACHE_DIR)/modified-Hack-Regular.ttf $(MAKE_ITALIC_SCRIPT)
+	@python3 $(MAKE_ITALIC_SCRIPT) $< $@ 2>> $(ERROR_LOG_FILE)
+
+$(CACHE_DIR)/modified-Hack-BoldItalic.ttf: $(CACHE_DIR)/modified-Hack-Bold.ttf $(MAKE_ITALIC_SCRIPT)
+	@python3 $(MAKE_ITALIC_SCRIPT) $< $@ 2>> $(ERROR_LOG_FILE)
+
+$(CACHE_DIR)/modified-IBMPlexSansJP-Italic.ttf: $(CACHE_DIR)/modified-IBMPlexSansJP-Regular.ttf $(MAKE_ITALIC_SCRIPT)
+	@python3 $(MAKE_ITALIC_SCRIPT) $< $@ 2>> $(ERROR_LOG_FILE)
+
+$(CACHE_DIR)/modified-IBMPlexSansJP-BoldItalic.ttf: $(CACHE_DIR)/modified-IBMPlexSansJP-Bold.ttf $(MAKE_ITALIC_SCRIPT)
+	@python3 $(MAKE_ITALIC_SCRIPT) $< $@ 2>> $(ERROR_LOG_FILE)
+
+# Modify Regular/Bold and Nerd-Fonts
 $(CACHE_DIR)/modified-HackNerdFont.ttf: $(GLYPHS_DIR)/HackNerdFont-Regular.ttf $(MODIFY_HACK_NERD_SCRIPT)
 	@python3 $(MODIFY_HACK_NERD_SCRIPT) $< $@ 2>> $(ERROR_LOG_FILE)
 
@@ -29,6 +45,7 @@ $(CACHE_DIR)/modified-Hack-%.ttf: $(GLYPHS_DIR)/Hack-%.ttf $(MODIFY_HACK_SCRIPT)
 $(CACHE_DIR)/modified-IBMPlexSansJP-%.ttf: $(GLYPHS_DIR)/IBMPlexSansJP-%.ttf $(MODIFY_IBMPLEX_SCRIPT)
 	@python3 $(MODIFY_IBMPLEX_SCRIPT) $< $@ 2>> $(ERROR_LOG_FILE)
 
+# Setup directory
 $(CACHE_DIR) $(BUILD_DIR):
 	@mkdir -p $@
 

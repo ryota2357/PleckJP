@@ -22,8 +22,6 @@ def main():
 
     # print("Status:", hex(font.validate()))
     font.selection.all()
-    # font.addExtrema()
-    # font.removeOverlap()
     font.autoHint()
     font.autoInstr()
     font.selection.none()
@@ -37,7 +35,7 @@ def new_font():
     font = fontforge.font()
     font.ascent = P.ASCENT
     font.descent = P.DESCENT
-    font.italicangle = 0
+    font.italicangle = P.ITALICANGLE if "Italic" in FONT_STYLE else 0
     font.upos = P.UNDERLINE_POS
     font.uwidth = P.UNDERLINE_HEIGHT
     font.familyname = P.FAMILY
