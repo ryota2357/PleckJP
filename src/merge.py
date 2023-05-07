@@ -16,9 +16,10 @@ BUILD_FILE = sys.argv[5]
 
 def main():
     font = new_font()
-    font.mergeFonts(FONT_EN_TTF)
-    font.mergeFonts(FONT_JP_TTF)
-    font.mergeFonts(FONT_NF_TTF)
+
+    copy_merge(font, FONT_EN_TTF, "EN")
+    copy_merge(font, FONT_JP_TTF, "JP")
+    copy_merge(font, FONT_NF_TTF, "NF")
 
     # print("Status:", hex(font.validate()))
     font.selection.all()
@@ -28,6 +29,27 @@ def main():
 
     util.font_into_file(font, BUILD_FILE)
     print("Generated:", BUILD_FILE)
+
+
+def copy_merge(font, merge_font_ttf, type_):
+    merge_font = fontforge.open(merge_font_ttf)
+    merge_font.encoding = P.ENCODING
+    for codepoint in range(0x10ffff):  # Unicode Max
+        try:
+            glyph = merge_font[codepoint]
+            unicode = glyph.unicode
+            if unicode < 0:
+                continue
+            merge_font.selection.select(codepoint)
+            merge_font.copy()
+            font.selection.select(codepoint)
+            font.paste()
+            util.debug("copied:", hex(codepoint), type_)
+        except TypeError:  # No such glyph
+            pass
+    font.selection.none()
+    merge_font.close()
+    font.mergeFonts(merge_font_ttf)
 
 
 def new_font():
