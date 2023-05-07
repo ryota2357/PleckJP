@@ -5,7 +5,7 @@ ENCODING = 'UnicodeFull'
 COPYRIGHT = "\n".join([
     "[PleckJP]",
     "Copyright (c) 2023 ryota2357",
-    ""
+    "",
     "[IBM Plex]",
     "Copyright © 2017 IBM Corp.",
     "",
