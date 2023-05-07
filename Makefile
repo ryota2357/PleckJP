@@ -49,6 +49,20 @@ $(CACHE_DIR)/modified-IBMPlexSansJP-%.ttf: $(GLYPHS_DIR)/IBMPlexSansJP-%.ttf $(M
 $(CACHE_DIR) $(BUILD_DIR):
 	@mkdir -p $@
 
+release:
+	@echo "Current version is" $(shell python -c "import src.properties as p; print(p.VERSION, end='')")
+	@read -p "Type new version: " new_version; \
+        sed -i '' 's/^VERSION =.*/VERSION = "'$$new_version'"/' src/properties.py
+	@make clean
+	@docker-compose up
+	@cp LICENSE build/
+	@version=$$(python -c "import src.properties as p; print(p.VERSION, end='')") && \
+		cd build && \
+		zip -r PleckJP_v$$version.zip * && \
+		shasum -a 256 PleckJP_v$$version.zip | awk '{print $$1}' > PleckJP_v$$version.sha256
+	@rm build/LICENSE
+.PHONY: release
+
 clean:
 	@rm -f $(ERROR_LOG_FILE)
 	@rm -rf $(CACHE_DIR) $(BUILD_DIR)
