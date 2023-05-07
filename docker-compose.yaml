@@ -6,6 +6,6 @@ services:
             - .:/home/pleckjp
         container_name: pleckjp
         working_dir: /home/pleckjp
-        command: make -j4
+        command: make -j4 generate
         environment:
           - PLECKJP_ENABLE_DEBUG=0
