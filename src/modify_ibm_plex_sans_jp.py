@@ -67,11 +67,11 @@ def resize_all_scale(font):
     font.selection.all()
     scaled = set()  # some glyphs will be selected multiple times.
     for glyph in list(font.selection.byGlyphs):
-        codepoint = glyph.unicode
-        if codepoint != -1 and codepoint in scaled:
-            # print(f"this is already scaled: {codepoint:#x}")
+        unicode = glyph.unicode
+        if unicode != -1 and unicode in scaled:
+            util.debug(f"this is already scaled: {unicode:#x}")
             continue
-        scaled.add(codepoint)
+        scaled.add(unicode)
         encoding = glyph.encoding
         if encoding in hankaku1 or encoding in hankaku2:
             glyph.transform(mat_hankaku_kana)

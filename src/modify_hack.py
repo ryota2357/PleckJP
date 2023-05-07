@@ -44,12 +44,12 @@ def resize_all_width(font):
     scaled = set()  # some glyphs will be selected multiple times.
     font.selection.all()
     for glyph in list(font.selection.byGlyphs):
-        codepoint = glyph.unicode
-        if codepoint != -1 and codepoint in scaled:
-            # print(f"this is already scaled: {codepoint:#x}")
+        unicode = glyph.unicode
+        if unicode != -1 and unicode in scaled:
+            util.debug(f"this is already scaled: {unicode:#x}")
             continue
         glyph.transform(fix_scale_mat)
-        scaled.add(codepoint)
+        scaled.add(unicode)
         glyph.width = new_width
     font.round()
     font.selection.none()

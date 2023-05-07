@@ -1,4 +1,5 @@
 import psMat
+import os
 
 
 def font_into_file(font, filename):
@@ -36,3 +37,24 @@ def draw_square(glyphPen, center, width, height, clockwise=True):
         glyphPen.lineTo((center[0] + dx, center[1] + dy))
         glyphPen.lineTo((center[0] - dx, center[1] + dy))
     glyphPen.closePath()
+
+
+_is_debug_mode = None
+
+
+def _check_is_debug_mode():
+    global _is_debug_mode
+    if _is_debug_mode is not None:
+        return
+    env = os.getenv("PLECKJP_ENABLE_DEBUG", '0')
+    try:
+        value = int(env)
+        _is_debug_mode = True if value > 0 else False
+    except ValueError:
+        _is_debug_mode = False
+
+
+def debug(*msg):
+    _check_is_debug_mode()
+    if _is_debug_mode:
+        print(*msg)
