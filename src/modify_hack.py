@@ -75,8 +75,13 @@ def subscript_numbers(font):
 def modify_0(font):
     # Cover outer of 「0」
     pen = font[0x30].glyphPen(replace=False)
-    util.draw_square(pen, (512, 610), 900, 1350)
-    util.draw_square(pen, (512, 610), 200, 650, clockwise=False)
+    util.draw_square(pen,
+                     (const.EM // 4, const.EM * 0.3),
+                     const.EM * 0.45, const.EM * 0.67)
+    util.draw_square(pen,
+                     (const.EM // 4, const.EM * 0.3),
+                     const.EM * 0.10, const.EM * 0.32,
+                     clockwise=False)
     pen = None
 
     # Remove inner ellipse
@@ -100,11 +105,15 @@ def modify_m(font):
     # Extract where to remove
     glyph = font[0x6D]
     pen = glyph.glyphPen(replace=False)
-    util.draw_square(pen, (512, 100), 300, 250)
+    util.draw_square(pen,
+                     (const.EM // 4, const.EM * 0.05),
+                     const.EM * 0.15, const.EM * 0.13)
     font.intersect()
 
     # Create a cover that has a hole
-    util.draw_square(pen, (512, 512), 2000, 2000)
+    util.draw_square(pen,
+                     (const.EM // 4, const.EM // 4),
+                     const.EM, const.EM)
     pen = None
     font.correctDirection()
 

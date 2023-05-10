@@ -25,8 +25,9 @@ def glyph_riseze_width(glyph, new_width):
 
 
 def draw_square(glyphPen, center, width, height, clockwise=True):
-    dx = width // 2
-    dy = height // 2
+    dx = round(width / 2)
+    dy = round(height / 2)
+    center = (round(center[0]), round(center[1]))
     glyphPen.moveTo((center[0] - dx, center[1] - dy))
     if clockwise:
         glyphPen.lineTo((center[0] - dx, center[1] + dy))
