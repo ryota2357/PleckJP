@@ -48,8 +48,11 @@ def main():
         util.glyph_riseze_width(font[name], const.EM // 2)
     util.glyph_riseze_width(font["perthousand.full"], const.EM)
 
+    modify_whitespace(font)
+
     # Use Hack glyph
-    util.font_clear_glyph(font, 0x20, 0x2044)    # number, alphabet, etc
+    util.font_clear_glyph(font, 0x20, 0x2002)    # number, alphabet, etc
+    util.font_clear_glyph(font, 0x2004, 0x2044)  # ← skipping 0x2003 (EM SPACE)
     util.font_clear_glyph(font, 0x20ac)          # €
     util.font_clear_glyph(font, 0x2190, 0x21f5)  # arrow
     util.font_clear_glyph(font, 0x2200, 0x22A5)  # math symbol
@@ -111,6 +114,36 @@ def resize_all_scale(font):
             print(f"unkown scale: {width} name: {name}")
 
     font.selection.all()
+    font.round()
+    font.selection.none()
+
+
+def modify_whitespace(font):
+    # NOTE: if modify 0x3000, it also apply to 0x2003 (EM SPACE)
+    pen = font[0x3000].glyphPen(replace=False)
+
+    # draw square frame
+    util.draw_square(pen,
+                     (const.EM // 2, (const.EM - const.DESCENT) // 2),
+                     const.EM * 0.8, const.EM * 0.8)
+    util.draw_square(pen,
+                     (const.EM // 2, (const.EM - const.DESCENT) // 2),
+                     const.EM * 0.7, const.EM * 0.7,
+                     clockwise=False)
+
+    util.draw_square(pen,
+                     (const.EM // 2, (const.EM - const.DESCENT) // 2),
+                     const.EM * 0.35, const.EM * 2)
+    util.draw_square(pen,
+                     (0, (const.EM - const.DESCENT) // 2),
+                     const.EM * 0.5, const.EM * 0.35)
+    util.draw_square(pen,
+                     (const.EM, (const.EM - const.DESCENT) // 2),
+                     const.EM * 0.5, const.EM * 0.35)
+    pen = None
+
+    font.selection.select(0x3000)
+    font.intersect()
     font.round()
     font.selection.none()
 

@@ -23,6 +23,7 @@ def main():
     subscript_numbers(font)
 
     # Use IBMPlexSansJP glyph
+    util.font_clear_glyph(font, 0x2003)  # 　(EM SPACE)
     util.font_clear_glyph(font, 0x266a)  # ♪
 
     # Use Hack Nerd Font glyph
