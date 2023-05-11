@@ -24,6 +24,30 @@ def main():
     util.glyph_riseze_width(font[0xfb01], const.EM // 2)  # ﬁ
     util.glyph_riseze_width(font[0xfb02], const.EM // 2)  # ﬂ
 
+    # Fix width (Note that I don't know the meaning of the following glyphs)
+    # unkown scale: 1257 name: section
+    # unkown scale: 1187 name: dagger.prop
+    # unkown scale: 1187 name: daggerdbl.prop
+    # unkown scale: 1396 name: paragraph
+    # unkown scale: 2799 name: perthousand.full
+    # unkown scale: 1003 name: degree
+    # unkown scale: 1290 name: plusminus
+    # unkown scale: 1290 name: multiply
+    # unkown scale: 1290 name: divide
+    # unkown scale: 1290 name: zero.zero
+    # unkown scale: 2052 name: uni51F0
+    # unkown scale: 1245 name: a.alt01
+    # unkown scale: 1245 name: g.alt01
+    # unkown scale: 1142 name: g.alt02
+    # unkown scale: 1290 name: zero.alt01
+    # unkown scale: 1228 name: minus
+    for name in ("section", "dagger.prop", "daggerdbl.prop", "paragraph",
+                 "degree", "plusminus", "multiply",
+                 "divide", "zero.zero", "uni51F0", "a.alt01", "g.alt01",
+                 "g.alt02", "zero.alt01", "minus"):
+        util.glyph_riseze_width(font[name], const.EM // 2)
+    util.glyph_riseze_width(font["perthousand.full"], const.EM)
+
     # Use Hack glyph
     util.font_clear_glyph(font, 0x20, 0x2044)    # number, alphabet, etc
     util.font_clear_glyph(font, 0x20ac)          # €
