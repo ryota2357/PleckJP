@@ -15,7 +15,14 @@ def main():
     font = fontforge.open(FONT_FILE)
 
     set_all_em(font)
-    resize_all_scale(font)
+
+    # Shrink to 1:2
+    util.glyph_riseze_width(font[0x2103], const.EM // 2)  # ℃
+    util.glyph_riseze_width(font[0x2109], const.EM // 2)  # ℉
+    util.glyph_riseze_width(font[0x2121], const.EM // 2)  # ℡
+    util.glyph_riseze_width(font[0x212B], const.EM // 2)  # Å
+    util.glyph_riseze_width(font[0xfb01], const.EM // 2)  # ﬁ
+    util.glyph_riseze_width(font[0xfb02], const.EM // 2)  # ﬂ
 
     # Use Hack glyph
     util.font_clear_glyph(font, 0x20, 0x2044)    # number, alphabet, etc
@@ -28,14 +35,7 @@ def main():
     util.font_clear_glyph(font, 0x2500, 0x2595)  # border symbol
     util.font_clear_glyph(font, 0x25a0, 0x25ef)  # block symbol
 
-    # Shrink to 1:2
-    util.glyph_riseze_width(font[0x2103], const.EM // 2)  # ℃
-    util.glyph_riseze_width(font[0x2109], const.EM // 2)  # ℉
-    util.glyph_riseze_width(font[0x2121], const.EM // 2)  # ℡
-    util.glyph_riseze_width(font[0x212B], const.EM // 2)  # Å
-    font.selection.all()
-    font.round()
-    font.selection.none()
+    resize_all_scale(font)
 
     util.font_into_file(font, BUILD_FILE)
     print(FONT_FILE, " -> ", BUILD_FILE)
@@ -52,33 +52,31 @@ def set_all_em(font):
 
 
 def resize_all_scale(font):
-    hankaku1 = range(0xFF61, 0xFF9F + 1)
-    hankaku2 = range(0x1100e8, 0x11015c + 1)
     scale = 0.82
     x_to_center = const.EM * (1 - scale) / 2
 
-    scale_mat = psMat.scale(scale)
-    trans_mat = psMat.translate(x_to_center, 0)
-    trans_mat_hankaku_kana = psMat.translate(x_to_center / 2, 0)
+    scale_mat = [psMat.scale(scale) for _ in range(2)]
+    trans_mat = [psMat.translate(x) for x in (x_to_center, x_to_center / 2)]
+    mat = [psMat.compose(scale_mat[i], trans_mat[i]) for i in range(2)]
 
-    mat = psMat.compose(scale_mat, trans_mat)
-    mat_hankaku_kana = psMat.compose(scale_mat, trans_mat_hankaku_kana)
-
-    font.selection.all()
-    scaled = set()  # some glyphs will be selected multiple times.
-    for glyph in list(font.selection.byGlyphs):
+    scaled = set()
+    for glyph in font.glyphs():
+        width = glyph.width
         unicode = glyph.unicode
         if unicode != -1 and unicode in scaled:
             util.debug(f"this is already scaled: {unicode:#x}")
             continue
-        scaled.add(unicode)
-        encoding = glyph.encoding
-        if encoding in hankaku1 or encoding in hankaku2:
-            glyph.transform(mat_hankaku_kana)
+        if width == const.EM:
+            glyph.transform(mat[0])
+            glyph.width = const.EM
+        elif width == const.EM // 2:
+            glyph.transform(mat[1])
             glyph.width = const.EM // 2
         else:
-            glyph.transform(mat)
-            glyph.width = const.EM
+            name = glyph.glyphname
+            print(f"unkown scale: {width} name: {name}")
+
+    font.selection.all()
     font.round()
     font.selection.none()
 
