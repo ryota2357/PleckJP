@@ -35,6 +35,16 @@ def main():
     util.font_clear_glyph(font, 0x2500, 0x2595)  # border symbol
     util.font_clear_glyph(font, 0x25a0, 0x25ef)  # block symbol
 
+    # Remove vertical fonts
+    font.removeLookup("'vert' Vertical Alternates lookup 18")
+    font.removeLookup("'vrt2' Vertical Rotation & Alternates lookup 19")
+    for glyph in font.glyphs():
+        if glyph.unicode != -1:
+            continue
+        name = glyph.glyphname
+        if name.endswith(".rotat"):
+            util.font_clear_glyph(font, name)
+
     resize_all_scale(font)
 
     util.font_into_file(font, BUILD_FILE)
