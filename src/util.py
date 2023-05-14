@@ -3,7 +3,7 @@ import os
 
 
 def font_into_file(font, filename):
-    # print("Status:", hex(font.validate()), filename)
+    # log("Status:", hex(font.validate()), filename)
     font.generate(filename, flags=("opentype",))
     font.close()
 
@@ -40,6 +40,10 @@ def draw_square(glyphPen, center, width, height, clockwise=True):
     glyphPen.closePath()
 
 
+def log(*msg):
+    print(*msg, flush=True)
+
+
 _is_debug_mode = None
 
 
@@ -58,4 +62,4 @@ def _check_is_debug_mode():
 def debug(*msg):
     _check_is_debug_mode()
     if _is_debug_mode:
-        print(*msg)
+        log(*msg)

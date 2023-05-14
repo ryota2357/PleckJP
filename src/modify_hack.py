@@ -33,7 +33,7 @@ def main():
     modify_m(font)
 
     util.font_into_file(font, BUILD_FILE)
-    print(FONT_FILE, " -> ", BUILD_FILE)
+    util.log(FONT_FILE, " -> ", BUILD_FILE)
 
 
 # ref: https://github.com/delphinus/homebrew-sfmono-square/blob/3b9c3632bde66f227e57ca7606b402eef41ab78b/src/sfmono.py#L167

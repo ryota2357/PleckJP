@@ -85,7 +85,7 @@ def main():
     resize_all_scale(font)
 
     util.font_into_file(font, BUILD_FILE)
-    print(FONT_FILE, " -> ", BUILD_FILE)
+    util.log(FONT_FILE, " -> ", BUILD_FILE)
 
 
 def set_all_em(font):
@@ -121,7 +121,7 @@ def resize_all_scale(font):
             glyph.width = const.EM // 2
         else:
             name = glyph.glyphname
-            print(f"unkown scale: {width} name: {name}")
+            util.log(f"unkown scale: {width} name: {name}")
 
     font.selection.all()
     font.round()

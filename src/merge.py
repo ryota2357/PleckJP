@@ -21,14 +21,14 @@ def main():
     copy_merge(font, FONT_JP_TTF, "JP")
     copy_merge(font, FONT_NF_TTF, "NF")
 
-    # print("Status:", hex(font.validate()))
+    # util.log("Status:", hex(font.validate()))
     font.selection.all()
     font.autoHint()
     font.autoInstr()
     font.selection.none()
 
     util.font_into_file(font, BUILD_FILE)
-    print("Generated:", BUILD_FILE)
+    util.log("Generated:", BUILD_FILE)
 
 
 def copy_merge(font, merge_font_ttf, type_):

@@ -24,7 +24,7 @@ def main():
     font.selection.none()
 
     util.font_into_file(font, BUILD_FILE)
-    print(FONT_FILE, " -> ", BUILD_FILE)
+    util.log(FONT_FILE, " -> ", BUILD_FILE)
 
 
 if __name__ == "__main__":

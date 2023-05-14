@@ -74,7 +74,7 @@ def main():
     font.clear()
 
     util.font_into_file(font, BUILD_FILE)
-    print(FONT_FILE, " -> ", BUILD_FILE)
+    util.log(FONT_FILE, " -> ", BUILD_FILE)
 
 
 def selectMore(font, start, end=None):
