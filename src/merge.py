@@ -50,6 +50,7 @@ def copy_merge(font, merge_font_ttf, type_):
     font.selection.none()
     merge_font.close()
     font.mergeFonts(merge_font_ttf)
+    util.log("Merged:", merge_font_ttf, "to", BUILD_FILE)
 
 
 def new_font():
