@@ -14,6 +14,16 @@ BUILD_FILE = sys.argv[2]
 def main():
     font = fontforge.open(FONT_FILE)
 
+    # Remove kerning info
+    for lookup in font.gpos_lookups:
+        if lookup.startswith("'halt'") or \
+           lookup.startswith("'vhal'") or \
+           lookup.startswith("'palt'") or \
+           lookup.startswith("'vpal'") or \
+           lookup.startswith("'kern'") or \
+           lookup.startswith("'vkrn'"):
+            font.removeLookup(lookup)
+
     set_all_em(font)
 
     # Shrink to 1:2
