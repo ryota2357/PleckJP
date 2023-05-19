@@ -36,14 +36,13 @@ def copy_merge(font, merge_font_ttf, type_):
     merge_font.encoding = P.ENCODING
     for codepoint in range(0x10ffff):  # Unicode Max
         try:
-            glyph = merge_font[codepoint]
-            unicode = glyph.unicode
-            if unicode < 0:
+            if merge_font[codepoint].unicode < 0:
                 continue
             merge_font.selection.select(codepoint)
             merge_font.copy()
             font.selection.select(codepoint)
             font.paste()
+            font[codepoint].glyphname = merge_font[codepoint].glyphname
             util.debug("copied:", hex(codepoint), type_)
         except TypeError:  # No such glyph
             pass
