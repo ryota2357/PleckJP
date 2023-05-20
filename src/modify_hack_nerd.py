@@ -13,6 +13,13 @@ BUILD_FILE = sys.argv[2]
 
 def main():
     font = fontforge.open(FONT_FILE)
+
+    font.unlinkReferences()
+    for lookup in font.gpos_lookups:
+        font.removeLookup(lookup)
+    for lookup in font.gsub_lookups:
+        font.removeLookup(lookup)
+
     modify_hack.resize_all_width(font)
 
     # Select only nerd icon fonts
