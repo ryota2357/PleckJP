@@ -17,9 +17,9 @@ BUILD_FILE = sys.argv[5]
 def main():
     font = new_font()
 
-    copy_merge(font, FONT_EN_TTF, "EN")
-    copy_merge(font, FONT_JP_TTF, "JP")
-    copy_merge(font, FONT_NF_TTF, "NF")
+    merge_en(font)
+    merge_jp(font)
+    merge_nf(font)
 
     # util.log("Status:", hex(font.validate()))
     font.selection.all()
@@ -31,25 +31,36 @@ def main():
     util.log("Generated:", BUILD_FILE)
 
 
-def copy_merge(font, merge_font_ttf, type_):
-    merge_font = fontforge.open(merge_font_ttf)
-    merge_font.encoding = P.ENCODING
-    for codepoint in range(0x10ffff):  # Unicode Max
-        try:
-            if merge_font[codepoint].unicode < 0:
-                continue
-            merge_font.selection.select(codepoint)
-            merge_font.copy()
-            font.selection.select(codepoint)
-            font.paste()
-            font[codepoint].glyphname = merge_font[codepoint].glyphname
-            util.debug("copied:", hex(codepoint), type_)
-        except TypeError:  # No such glyph
-            pass
+def merge_en(font):
+    en_font = fontforge.open(FONT_EN_TTF)
+    en_font.encoding = P.ENCODING
+    font.mergeFonts(en_font)
+    util.log("Merged:", FONT_EN_TTF, "->", BUILD_FILE)
+
+
+def merge_jp(font):
+    jp_font = fontforge.open(FONT_JP_TTF)
+    for glyph in jp_font.glyphs():
+        unicode = glyph.unicode
+        if unicode == -1:
+            continue
+        jp_font.selection.select(unicode)
+        jp_font.copy()
+        font.selection.select(unicode)
+        font.paste()
+        font[unicode].glyphname = glyph.glyphname
+        if glyph.altuni is not None:
+            font[unicode].altuni = glyph.altuni
+        font[unicode].unicode = unicode
+    font.mergeFonts(jp_font)
     font.selection.none()
-    merge_font.close()
-    font.mergeFonts(merge_font_ttf)
-    util.log("Merged:", merge_font_ttf, "to", BUILD_FILE)
+    jp_font.close()
+    util.log("Merged:", FONT_JP_TTF, "->", BUILD_FILE)
+
+
+def merge_nf(font):
+    font.mergeFonts(FONT_NF_TTF)
+    util.log("Merged:", FONT_NF_TTF, "->", BUILD_FILE)
 
 
 def new_font():
