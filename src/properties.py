@@ -1,5 +1,5 @@
 FAMILY = "PleckJP"
-VERSION = "0.2.1"
+VERSION = "0.2.2"
 ENCODING = 'UnicodeFull'
 
 COPYRIGHT = "\n".join([
