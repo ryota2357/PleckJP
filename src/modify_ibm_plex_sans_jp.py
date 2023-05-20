@@ -84,6 +84,7 @@ def main():
 
     resize_all_scale(font)
 
+    util.fix_all_glyph_points(font)
     util.font_into_file(font, BUILD_FILE)
     util.log(FONT_FILE, " -> ", BUILD_FILE)
 
@@ -123,10 +124,6 @@ def resize_all_scale(font):
             name = glyph.glyphname
             util.log(f"unkown scale: {width} name: {name}")
 
-    font.selection.all()
-    font.round()
-    font.selection.none()
-
 
 def modify_whitespace(font):
     # NOTE: if modify 0x3000, it also apply to 0x2003 (EM SPACE)
@@ -154,7 +151,6 @@ def modify_whitespace(font):
 
     font.selection.select(0x3000)
     font.intersect()
-    font.round()
     font.selection.none()
 
 

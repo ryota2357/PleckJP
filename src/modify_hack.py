@@ -32,6 +32,7 @@ def main():
     modify_0(font)
     modify_m(font)
 
+    util.fix_all_glyph_points(font)
     util.font_into_file(font, BUILD_FILE)
     util.log(FONT_FILE, " -> ", BUILD_FILE)
 
@@ -52,7 +53,6 @@ def resize_all_width(font):
         glyph.transform(fix_scale_mat)
         scaled.add(unicode)
         glyph.width = new_width
-    font.round()
     font.selection.none()
 
 

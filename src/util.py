@@ -17,6 +17,12 @@ def font_clear_glyph(font, start, end=None):
     font.selection.none()
 
 
+def fix_all_glyph_points(font):
+    for glyph in font.glyphs():
+        glyph.round()
+        glyph.addExtrema("all")
+
+
 def glyph_riseze_width(glyph, new_width):
     old_width = glyph.width
     mat = psMat.scale(float(new_width) / old_width, 1)
