@@ -21,7 +21,6 @@ def main():
     merge_jp(font)
     merge_nf(font)
 
-    # util.log("Status:", hex(font.validate()))
     font.selection.all()
     font.autoHint()
     font.autoInstr()
@@ -106,7 +105,7 @@ def new_font():
         2,                            # Arm Style = 2-Straight Arms/Horizontal
         style_prop['panose_letterform'],  # Letterform
         2,                            # Midline = 2-Standard/Trimmed
-        4,                             # X-height = 4-Constant/Large
+        4,                            # X-height = 4-Constant/Large
     )
 
     # typoascent, typodescent is generic version for above.

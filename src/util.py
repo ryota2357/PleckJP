@@ -17,6 +17,16 @@ def font_clear_glyph(font, start, end=None):
     font.selection.none()
 
 
+def font_set_em(font, ascent, descent, em):
+    old_em = font.em
+    font.selection.all()
+    font.unlinkReferences()
+    font.ascent = round(float(ascent) / em * old_em)
+    font.descent = round(float(descent) / em * old_em)
+    font.em = em
+    font.selection.none()
+
+
 def fix_all_glyph_points(font):
     for glyph in font.glyphs():
         glyph.round()

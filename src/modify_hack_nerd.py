@@ -1,6 +1,7 @@
 import sys
 import fontforge
 import util
+import properties as const
 
 import modify_hack
 
@@ -20,6 +21,7 @@ def main():
     for lookup in font.gsub_lookups:
         font.removeLookup(lookup)
 
+    util.font_set_em(font, const.ASCENT, const.DESCENT, const.EM)
     modify_hack.resize_all_width(font)
 
     # Select only nerd icon fonts

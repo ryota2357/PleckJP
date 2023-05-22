@@ -16,8 +16,8 @@ COPYRIGHT = "\n".join([
     "opyright (c) 2014, Ryan L McIntyre",
 ])
 
-ASCENT = 1556
-DESCENT = 492
+ASCENT = 1618
+DESCENT = 430
 EM = ASCENT + DESCENT
 ITALICANGLE = -11
 UNDERLINE_POS = -265

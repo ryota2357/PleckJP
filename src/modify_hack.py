@@ -14,6 +14,7 @@ BUILD_FILE = sys.argv[2]
 def main():
     font = fontforge.open(FONT_FILE)
 
+    util.font_set_em(font, const.ASCENT, const.DESCENT, const.EM)
     resize_all_width(font)
 
     # TODO: Create glyph

@@ -24,7 +24,7 @@ def main():
            lookup.startswith("'vkrn'"):
             font.removeLookup(lookup)
 
-    set_all_em(font)
+    util.font_set_em(font, const.ASCENT, const.DESCENT, const.EM)
 
     # Shrink to 1:2
     util.glyph_riseze_width(font[0x2103], const.EM // 2)  # ℃
@@ -87,16 +87,6 @@ def main():
     util.fix_all_glyph_points(font)
     util.font_into_file(font, BUILD_FILE)
     util.log(FONT_FILE, " -> ", BUILD_FILE)
-
-
-def set_all_em(font):
-    old_em = font.em
-    font.selection.all()
-    font.unlinkReferences()
-    font.ascent = round(float(const.ASCENT) / const.EM * old_em)
-    font.descent = round(float(const.DESCENT) / const.EM * old_em)
-    font.em = const.EM
-    font.selection.none()
 
 
 def resize_all_scale(font):
