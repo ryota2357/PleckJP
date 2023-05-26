@@ -27,6 +27,16 @@ def font_set_em(font, ascent, descent, em):
     font.selection.none()
 
 
+def font_resize_all_width(font, new_width):
+    for glyph in font.glyphs():
+        if glyph.width == new_width:
+            continue
+        if glyph.width != 0:
+            fix_scale_mat = psMat.scale(float(new_width) / glyph.width)
+            glyph.transform(fix_scale_mat)
+        glyph.width = new_width
+
+
 def fix_all_glyph_points(font):
     for glyph in font.glyphs():
         glyph.round()

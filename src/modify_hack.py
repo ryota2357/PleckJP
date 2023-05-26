@@ -1,6 +1,5 @@
 import sys
 import fontforge
-import psMat
 import util
 import properties as const
 
@@ -14,15 +13,6 @@ BUILD_FILE = sys.argv[2]
 def main():
     font = fontforge.open(FONT_FILE)
 
-    util.font_set_em(font, const.ASCENT, const.DESCENT, const.EM)
-    resize_all_width(font)
-
-    # TODO: Create glyph
-    # 0x226a: ≪
-    # 0x226b: ≫
-    # 0x22a5: ⊥   0x272c から持ってくる？
-    subscript_numbers(font)
-
     # Use IBMPlexSansJP glyph
     util.font_clear_glyph(font, 0x2003)  # 　(EM SPACE)
     util.font_clear_glyph(font, 0x266a)  # ♪
@@ -30,31 +20,21 @@ def main():
     # Use Hack Nerd Font glyph
     util.font_clear_glyph(font, 0xe0a0, 0xe0b3)  # Private Use Area
 
+    util.font_set_em(font, const.ASCENT, const.DESCENT, const.EM)
+    util.font_resize_all_width(font, const.EM // 2)
+
+    # TODO: Create glyph
+    # 0x226a: ≪
+    # 0x226b: ≫
+    # 0x22a5: ⊥   0x272c から持ってくる？
+    subscript_numbers(font)
+
     modify_0(font)
     modify_m(font)
 
     util.fix_all_glyph_points(font)
     util.font_into_file(font, BUILD_FILE)
     util.log(FONT_FILE, " -> ", BUILD_FILE)
-
-
-# ref: https://github.com/delphinus/homebrew-sfmono-square/blob/3b9c3632bde66f227e57ca7606b402eef41ab78b/src/sfmono.py#L167
-def resize_all_width(font):
-    old_width = font[0x41].width
-    new_width = const.EM // 2
-    fix_scale_mat = psMat.scale(float(new_width) / old_width)
-
-    scaled = set()  # some glyphs will be selected multiple times.
-    font.selection.all()
-    for glyph in list(font.selection.byGlyphs):
-        unicode = glyph.unicode
-        if unicode != -1 and unicode in scaled:
-            util.debug(f"this is already scaled: {unicode:#x}")
-            continue
-        glyph.transform(fix_scale_mat)
-        scaled.add(unicode)
-        glyph.width = new_width
-    font.selection.none()
 
 
 def subscript_numbers(font):

@@ -24,6 +24,28 @@ def main():
            lookup.startswith("'vkrn'"):
             font.removeLookup(lookup)
 
+    # Remove vertical fonts
+    font.removeLookup("'vert' Vertical Alternates lookup 18")
+    font.removeLookup("'vrt2' Vertical Rotation & Alternates lookup 19")
+    for glyph in font.glyphs():
+        if glyph.unicode != -1:
+            continue
+        name = glyph.glyphname
+        if name.endswith(".rotat"):
+            util.font_clear_glyph(font, name)
+
+    # Use Hack glyph
+    util.font_clear_glyph(font, 0x20, 0x2002)    # number, alphabet, etc
+    util.font_clear_glyph(font, 0x2004, 0x2044)  # ← skipping 0x2003 (EM SPACE)
+    util.font_clear_glyph(font, 0x20ac)          # €
+    util.font_clear_glyph(font, 0x2190, 0x21f5)  # arrow
+    util.font_clear_glyph(font, 0x2200, 0x22A5)  # math symbol
+    util.font_clear_glyph(font, 0x2116)          # №
+    util.font_clear_glyph(font, 0x2122)          # ™
+    util.font_clear_glyph(font, 0x23a7, 0x23ad)  # curly bracket
+    util.font_clear_glyph(font, 0x2500, 0x2595)  # border symbol
+    util.font_clear_glyph(font, 0x25a0, 0x25ef)  # block symbol
+
     util.font_set_em(font, const.ASCENT, const.DESCENT, const.EM)
 
     # Shrink to 1:2
@@ -59,29 +81,6 @@ def main():
     util.glyph_riseze_width(font["perthousand.full"], const.EM)
 
     modify_whitespace(font)
-
-    # Use Hack glyph
-    util.font_clear_glyph(font, 0x20, 0x2002)    # number, alphabet, etc
-    util.font_clear_glyph(font, 0x2004, 0x2044)  # ← skipping 0x2003 (EM SPACE)
-    util.font_clear_glyph(font, 0x20ac)          # €
-    util.font_clear_glyph(font, 0x2190, 0x21f5)  # arrow
-    util.font_clear_glyph(font, 0x2200, 0x22A5)  # math symbol
-    util.font_clear_glyph(font, 0x2116)          # №
-    util.font_clear_glyph(font, 0x2122)          # ™
-    util.font_clear_glyph(font, 0x23a7, 0x23ad)  # curly bracket
-    util.font_clear_glyph(font, 0x2500, 0x2595)  # border symbol
-    util.font_clear_glyph(font, 0x25a0, 0x25ef)  # block symbol
-
-    # Remove vertical fonts
-    font.removeLookup("'vert' Vertical Alternates lookup 18")
-    font.removeLookup("'vrt2' Vertical Rotation & Alternates lookup 19")
-    for glyph in font.glyphs():
-        if glyph.unicode != -1:
-            continue
-        name = glyph.glyphname
-        if name.endswith(".rotat"):
-            util.font_clear_glyph(font, name)
-
     resize_all_scale(font)
 
     util.fix_all_glyph_points(font)
@@ -97,13 +96,8 @@ def resize_all_scale(font):
     trans_mat = [psMat.translate(x) for x in (x_to_center, x_to_center / 2)]
     mat = [psMat.compose(scale_mat[i], trans_mat[i]) for i in range(2)]
 
-    scaled = set()
     for glyph in font.glyphs():
         width = glyph.width
-        unicode = glyph.unicode
-        if unicode != -1 and unicode in scaled:
-            util.debug(f"this is already scaled: {unicode:#x}")
-            continue
         if width == const.EM:
             glyph.transform(mat[0])
             glyph.width = const.EM
