@@ -1,5 +1,6 @@
 import sys
 import fontforge
+import psMat
 import util
 import properties as const
 
@@ -26,8 +27,8 @@ def main():
     # TODO: Create glyph
     # 0x226a: ≪
     # 0x226b: ≫
-    # 0x22a5: ⊥   0x272c から持ってくる？
-    subscript_numbers(font)
+    fix_subscript_numbers(font)
+    create_up_tack(font)
 
     modify_0(font)
     modify_m(font)
@@ -37,7 +38,7 @@ def main():
     util.log(FONT_FILE, " -> ", BUILD_FILE)
 
 
-def subscript_numbers(font):
+def fix_subscript_numbers(font):
     def cp(from_, to):
         font.selection.select(from_)
         font.copy()
@@ -51,6 +52,21 @@ def subscript_numbers(font):
         return "uni" + hex_str + ".subs"
     for i in range(10):
         cp(subs(0x30 + i), 0x2080 + i)
+    font.selection.none()
+
+
+def create_up_tack(font):
+    # 0x22a5 ⊥ (UP TACK)
+    font.selection.select(0x22a4)  # ⊤
+    font.copy()
+    font.selection.select(0x22a5)
+    font.paste()
+
+    rot_mat = psMat.rotate(3.1415926535)
+    move_mat = psMat.translate(const.EM // 2, 1065)
+    mat = psMat.compose(rot_mat, move_mat)
+    font.transform(mat, ("noWidth",))
+
     font.selection.none()
 
 
