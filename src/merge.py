@@ -34,25 +34,20 @@ def merge_en(font):
     en_font = fontforge.open(FONT_EN_TTF)
     en_font.encoding = P.ENCODING
     font.mergeFonts(en_font)
+    en_font.close()
     util.log("Merged:", FONT_EN_TTF, "->", BUILD_FILE)
 
 
 def merge_jp(font):
     jp_font = fontforge.open(FONT_JP_TTF)
+    font.mergeFonts(jp_font)
     for glyph in jp_font.glyphs():
         unicode = glyph.unicode
         if unicode == -1:
             continue
-        jp_font.selection.select(unicode)
-        jp_font.copy()
-        font.selection.select(unicode)
-        font.paste()
-        font[unicode].glyphname = glyph.glyphname
         if glyph.altuni is not None:
             font[unicode].altuni = glyph.altuni
         font[unicode].unicode = unicode
-    font.mergeFonts(jp_font)
-    font.selection.none()
     jp_font.close()
     util.log("Merged:", FONT_JP_TTF, "->", BUILD_FILE)
 
