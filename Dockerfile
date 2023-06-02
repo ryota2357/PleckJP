@@ -2,18 +2,18 @@ FROM ubuntu:22.10
 
 RUN apt-get update && apt-get install -y \
     build-essential gettext cmake ninja-build git ccache python3-dev locales \
-    libtool \
-    libjpeg-dev \
-    libtiff5-dev \
-    libpng-dev \
+    libcairo2-dev \
     libfreetype6-dev \
     libgif-dev \
     libgtk-3-dev \
-    libxml2-dev \
+    libjpeg-dev \
     libpango1.0-dev \
-    libcairo2-dev \
+    libpng-dev \
+    libpython3-dev \
     libspiro-dev \
-    libpython3-dev && \
+    libtiff5-dev \
+    libtool \
+    libxml2-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -21,13 +21,13 @@ RUN apt-get update && apt-get install -y \
 RUN ln -fs /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 
 # Set locale
-ENV LANG ja_JP.UTF-8
 RUN locale-gen ja_JP.UTF-8
-ENV LANG="ja_JP.UTF-8" \
-    LANGUAGE="ja_JP:en" \
-    LC_ALL="ja_JP.UTF-8"
+ENV LANG ja_JP.UTF-8
+ENV LANGUAGE ja_JP:en
+ENV LC_ALL ja_JP.UTF-8
 
 # Set python3
+RUN ln -s /usr/bin/python3 /usr/bin/python
 ENV PYTHON=python3
 
 # Install fontforge
