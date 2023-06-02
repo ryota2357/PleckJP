@@ -10,6 +10,7 @@ MODIFY_HACK_SCRIPT := src/modify_hack.py
 MODIFY_IBMPLEX_SCRIPT := src/modify_ibm_plex_sans_jp.py
 MODIFY_HACK_NERD_SCRIPT := src/modify_hack_nerd.py
 MERGE_SCRIPT := src/merge.py
+BUNDLE_NF_SCRIPT := src/bundle_nf.py
 
 
 .PHONY: all
@@ -44,10 +45,14 @@ clean:
 .SECONDARY: $(wildcard *.ttf)
 
 # Patch
-$(BUILD_DIR)/PleckJP-%.ttf: $(CACHE_DIR)/PleckJP-%.ttf
+$(BUILD_DIR)/PleckJP-%.ttf: $(CACHE_DIR)/PleckJP-%.ttf $(CACHE_DIR)/NerdFonts.ttf
 	@cp $< $@
 
-# Merge
+# Generate patch glyphs
+$(CACHE_DIR)/NerdFonts.ttf: $(GLYPHS_DIR)/FontPatcher-glyphs $(BUNDLE_NF_SCRIPT)
+	@python3 $(BUNDLE_NF_SCRIPT) $< $@ 2>> $(ERROR_LOG_FILE)
+
+# Merge base fonts
 $(CACHE_DIR)/PleckJP-Regular.ttf: $(CACHE_DIR)/modified-Hack-Regular.ttf $(CACHE_DIR)/modified-IBMPlexSansJP-Regular.ttf $(MERGE_SCRIPT)
 	@python3 $(MERGE_SCRIPT) $(word 1, $^) $(word 2, $^) Regular $@ 2>> $(ERROR_LOG_FILE)
 
@@ -60,7 +65,7 @@ $(CACHE_DIR)/PleckJP-Italic.ttf: $(CACHE_DIR)/modified-Hack-Regular.ttf $(CACHE_
 $(CACHE_DIR)/PleckJP-BoldItalic.ttf: $(CACHE_DIR)/modified-Hack-Bold.ttf $(CACHE_DIR)/modified-IBMPlexSansJP-Bold.ttf $(MERGE_SCRIPT)
 	@python3 $(MERGE_SCRIPT) $(word 1, $^) $(word 2, $^) BoldItalic $@ 2>> $(ERROR_LOG_FILE)
 
-# Modify
+# Modify base fonts
 $(CACHE_DIR)/modified-Hack-%.ttf: $(GLYPHS_DIR)/Hack-%.ttf $(MODIFY_HACK_SCRIPT)
 	@python3 $(MODIFY_HACK_SCRIPT) $< $@ 2>> $(ERROR_LOG_FILE)
 

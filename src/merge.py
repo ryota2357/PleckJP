@@ -63,9 +63,9 @@ def make_italic(font):
     def selectMore(start, end=None):
         nonlocal font
         if end is None:
-            font.selection.select(("more",), start)
+            font.selection.select(("more", "encoding"), start)
         else:
-            font.selection.select(("more", "ranges"), start, end)
+            font.selection.select(("more", "ranges", "encoding"), start, end)
 
     selectMore(0x21, 0x217f)
     selectMore(0x2460, 0x24ea)
