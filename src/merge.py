@@ -1,17 +1,17 @@
 import sys
 import fontforge
+import psMat
 import util
 import properties as P
 from datetime import datetime
 
-if len(sys.argv) != 6:
+if len(sys.argv) != 5:
     raise ValueError("Invalid argument")
 
 FONT_EN_TTF = sys.argv[1]
 FONT_JP_TTF = sys.argv[2]
-FONT_NF_TTF = sys.argv[3]
-FONT_STYLE = sys.argv[4]
-BUILD_FILE = sys.argv[5]
+FONT_STYLE = sys.argv[3]
+BUILD_FILE = sys.argv[4]
 
 
 def main():
@@ -19,7 +19,10 @@ def main():
 
     merge_en(font)
     merge_jp(font)
-    merge_nf(font)
+
+    if "Italic" in FONT_STYLE:
+        make_italic(font)
+        util.fix_all_glyph_points(font)
 
     font.selection.all()
     font.autoHint()
@@ -52,9 +55,33 @@ def merge_jp(font):
     util.log("Merged:", FONT_JP_TTF, "->", BUILD_FILE)
 
 
-def merge_nf(font):
-    font.mergeFonts(FONT_NF_TTF)
-    util.log("Merged:", FONT_NF_TTF, "->", BUILD_FILE)
+def make_italic(font):
+    PI = 3.14159265358979323846
+    rot_rad = -1 * P.ITALICANGLE * PI / 180
+    transform_mat = psMat.skew(rot_rad)
+
+    def selectMore(start, end=None):
+        nonlocal font
+        if end is None:
+            font.selection.select(("more",), start)
+        else:
+            font.selection.select(("more", "ranges"), start, end)
+
+    selectMore(0x21, 0x217f)
+    selectMore(0x2460, 0x24ea)
+    selectMore(0x2768, 0x277e)
+    selectMore(0x27e6, 0x27eb)
+    selectMore(0x2987, 0x2998)
+    selectMore(0x2e18)
+    selectMore(0x2e22, 0x2e2e)
+    selectMore(0x2e8e, 0xffe5)
+    selectMore(0x1f100)
+    selectMore(0x20b9f, 0x2f920)
+    # NOTE: After 0x110000, codepoint is defferent in Reguler and Bold.
+    selectMore(".notdef", "uni301F.half")
+    selectMore("acute.half", "zero.alt01")
+    font.transform(transform_mat)
+    font.selection.none()
 
 
 def new_font():
