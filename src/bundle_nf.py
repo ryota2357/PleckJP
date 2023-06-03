@@ -143,63 +143,9 @@ def transform_all(font, scale, translate):
     scale = psMat.scale(*scale)
     translate = psMat.translate(*translate)
     transform = psMat.compose(scale, translate)
+    font.selection.all()
     font.transform(transform)
-
-
-def copy_range(font, source, range_, remap):
-    def fixed_range(tuple_):
-        fixed = (*tuple_, None)
-        start = fixed[0]
-        stop = (fixed[1] or fixed[0]) + 1
-        return range(start, stop)
-    _range = fixed_range(range_)
-    _remap = fixed_range(remap or range_)
-    _remain_skip_count = len(_remap) - len(_range)
-    _remap_iter = iter(_remap)
-    _range_iter = iter(_range)
-
-    if _remain_skip_count > 0:
-        def next_source_codepoint():
-            nonlocal _remain_skip_count, _remap_iter
-            ret = next(_remap_iter, None)
-            while ret and _remain_skip_count >= 0:
-                try:
-                    _ = source[ret]
-                    break
-                except TypeError:  # No such glyph
-                    _remain_skip_count -= 1
-                    ret = next(_remap_iter, None)
-                    continue
-            return ret
-    elif _remain_skip_count == 0:
-        def next_source_codepoint():
-            return next(_remap_iter, None)
-    else:
-        raise ValueError("remap is smaller than range: ", len(_remap), len(_range))
-
-    def next_font_codepoint():
-        return next(_range_iter, None)
-
-    font_codepoint = next_font_codepoint()
-    source_codepoint = next_source_codepoint()
-    while font_codepoint and source_codepoint:
-        source.selection.select(source_codepoint)
-        source.copy()
-        font.selection.select(font_codepoint)
-        font.paste()
-        try:
-            glyphname = source[source_codepoint].glyphname + "#nf"
-            font[font_codepoint].glyphname = glyphname
-        except TypeError:  # No such glyph
-            util.debug("skipped bundle from", hex(source_codepoint), "to", hex(font_codepoint))
-            pass
-        font_codepoint = next_font_codepoint()
-        source_codepoint = next_source_codepoint()
-
-    if font_codepoint:
-        raise ValueError("Invalid range or remap (range is smaller than remap)")
-    if source_codepoint:
-        raise ValueError("Invalid range or remap (remap is smaller than range)")
+    font.selection.none()
 
 
 def new_font():
@@ -215,6 +161,80 @@ def new_font():
     font.fontname = familyname
     font.fullname = familyname
     return font
+
+
+def copy_range(font, source, range_, remap):
+    next_font_codepoint, next_source_codepoint = _copy_range_util(
+        font, source, range_, remap
+    )
+
+    font_codepoint = next_font_codepoint()
+    source_codepoint = next_source_codepoint()
+    while font_codepoint and source_codepoint:
+        source.selection.select(source_codepoint)
+        source.copy()
+        font.selection.select(font_codepoint)
+        font.paste()
+        try:
+            glyphname = source[source_codepoint].glyphname + "#nf"
+            fix_glyph(font[font_codepoint], glyphname)
+        except TypeError as e:
+            if str(e) != "No such glyph":
+                raise
+        font_codepoint = next_font_codepoint()
+        source_codepoint = next_source_codepoint()
+
+    if font_codepoint:
+        raise ValueError("Invalid range or remap (range is smaller than remap)")
+    if source_codepoint:
+        raise ValueError("Invalid range or remap (remap is smaller than range)")
+
+
+def fix_glyph(glyph, new_name):
+    glyph.glyphname = new_name
+    if glyph.width != 0:
+        glyph.left_side_bearing = int(max(glyph.left_side_bearing, 0))
+        glyph.right_side_bearing = int(max(glyph.right_side_bearing, 0))
+    glyph.width = P.EM // 2
+
+
+def _copy_range_util(font, source, range_, remap):
+    def fix_range(tuple_):
+        fixed = (*tuple_, None)
+        start = fixed[0]
+        stop = (fixed[1] or fixed[0]) + 1
+        return range(start, stop)
+    fixed_range = fix_range(range_)
+    fixed_remap = fix_range(remap or range_)
+    remain_skip_count = len(fixed_remap) - len(fixed_range)
+    remap_iter = iter(fixed_remap)
+    range_iter = iter(fixed_range)
+
+    if remain_skip_count > 0:
+        def next_source_codepoint():
+            nonlocal remain_skip_count, remap_iter
+            ret = next(remap_iter, None)
+            while ret and remain_skip_count >= 0:
+                try:
+                    _ = source[ret]
+                    break
+                except TypeError:  # No such glyph
+                    remain_skip_count -= 1
+                    ret = next(remap_iter, None)
+                    continue
+            return ret
+    elif remain_skip_count == 0:
+        def next_source_codepoint():
+            return next(remap_iter, None)
+    else:
+        raise ValueError("remap is smaller than range: ",
+                         "remap:", len(fixed_remap),
+                         "range:", len(fixed_range))
+
+    def next_font_codepoint():
+        return next(range_iter, None)
+
+    return next_font_codepoint, next_source_codepoint
 
 
 if __name__ == "__main__":
