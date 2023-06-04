@@ -11,6 +11,7 @@ MODIFY_IBMPLEX_SCRIPT := src/modify_ibm_plex_sans_jp.py
 MODIFY_HACK_NERD_SCRIPT := src/modify_hack_nerd.py
 MERGE_SCRIPT := src/merge.py
 BUNDLE_NF_SCRIPT := src/bundle_nf.py
+PATCH_SCRIPT := src/patch.py
 
 
 .PHONY: all
@@ -45,8 +46,8 @@ clean:
 .SECONDARY: $(wildcard *.ttf)
 
 # Patch
-$(BUILD_DIR)/PleckJP-%.ttf: $(CACHE_DIR)/PleckJP-%.ttf $(CACHE_DIR)/NerdFonts.ttf
-	@cp $< $@
+$(BUILD_DIR)/PleckJP-%.ttf: $(CACHE_DIR)/PleckJP-%.ttf $(CACHE_DIR)/NerdFonts.ttf $(PATCH_SCRIPT)
+	@python3 $(PATCH_SCRIPT) $< $(word 2, $^) $@ 2>> $(ERROR_LOG_FILE)
 
 # Generate patch glyphs
 $(CACHE_DIR)/NerdFonts.ttf: $(GLYPHS_DIR)/FontPatcher-glyphs $(BUNDLE_NF_SCRIPT)
