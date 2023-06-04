@@ -35,7 +35,7 @@ def main():
 
     util.fix_all_glyph_points(font)
     util.font_into_file(font, BUILD_FILE)
-    util.log(FONT_FILE, " -> ", BUILD_FILE)
+    util.log("Modified:", FONT_FILE, "->", BUILD_FILE)
 
 
 def fix_subscript_numbers(font):
