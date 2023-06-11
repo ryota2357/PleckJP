@@ -1,7 +1,7 @@
 FROM ubuntu:22.10
 
 RUN apt-get update && apt-get install -y \
-    build-essential gettext cmake ninja-build git ccache python3-dev locales \
+    build-essential gettext cmake ninja-build git ccache python3-dev python3-pip locales \
     libcairo2-dev \
     libfreetype6-dev \
     libgif-dev \
@@ -40,5 +40,7 @@ RUN cd fontforge     && \
     ninja install    && \
     ninja clean
 
-# Add python module for fontforge
+# Add python module
 ENV PYTHONPATH=/usr/local/lib/python3/dist-packages/
+RUN pip install --upgrade --no-cache-dir 'pip>=23.1.2' &&\
+    pip install --no-cache-dir 'numpy>=1.24.3'

@@ -11,6 +11,7 @@ MODIFY_IBMPLEX_SCRIPT := src/modify_ibm_plex_sans_jp.py
 MODIFY_HACK_NERD_SCRIPT := src/modify_hack_nerd.py
 MERGE_SCRIPT := src/merge.py
 BUNDLE_NF_SCRIPT := src/bundle_nf.py
+BRAILLE_GEN_SCRIPT := src/braille_gen.py
 PATCH_SCRIPT := src/patch.py
 
 
@@ -46,12 +47,15 @@ clean:
 .SECONDARY: $(wildcard *.ttf)
 
 # Patch
-$(BUILD_DIR)/PleckJP-%.ttf: $(CACHE_DIR)/PleckJP-%.ttf $(CACHE_DIR)/NerdFonts.ttf $(PATCH_SCRIPT)
-	@python3 $(PATCH_SCRIPT) $< $(word 2, $^) $@ 2>> $(ERROR_LOG_FILE)
+$(BUILD_DIR)/PleckJP-%.ttf: $(CACHE_DIR)/PleckJP-%.ttf $(CACHE_DIR)/NerdFonts.ttf $(CACHE_DIR)/Braille.ttf $(PATCH_SCRIPT)
+	@python3 $(PATCH_SCRIPT) $< $(word 2, $^) $(word 3, $^) $@ 2>> $(ERROR_LOG_FILE)
 
 # Generate patch glyphs
 $(CACHE_DIR)/NerdFonts.ttf: $(GLYPHS_DIR)/FontPatcher-glyphs $(BUNDLE_NF_SCRIPT)
 	@python3 $(BUNDLE_NF_SCRIPT) $< $@ 2>> $(ERROR_LOG_FILE)
+
+$(CACHE_DIR)/Braille.ttf: $(BRAILLE_GEN_SCRIPT)
+	@python3 $(BRAILLE_GEN_SCRIPT) $@ 2>> $(ERROR_LOG_FILE)
 
 # Merge base fonts
 $(CACHE_DIR)/PleckJP-Regular.ttf: $(CACHE_DIR)/modified-Hack-Regular.ttf $(CACHE_DIR)/modified-IBMPlexSansJP-Regular.ttf $(MERGE_SCRIPT)
