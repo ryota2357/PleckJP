@@ -13,7 +13,7 @@ COPYRIGHT = "\n".join([
     "Copyright (c) 2018 Source Foundry Authors",
     "",
     "[Nerd Fonts]",
-    "opyright (c) 2014, Ryan L McIntyre",
+    "Copyright (c) 2014, Ryan L McIntyre",
 ])
 
 ASCENT = 1618
