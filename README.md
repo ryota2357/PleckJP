@@ -27,6 +27,8 @@ brew install pleck-jp
 
 ![code-cpp-rust](./images/code-cpp-rust.png)
 
+![chars](./images/chars.png)
+
 ![nerdfonts](./images/nerdfonts.png)
 
 ![gotop](./images/gotop.png)
