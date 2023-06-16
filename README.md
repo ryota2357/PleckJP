@@ -2,8 +2,6 @@
 
 > [Hack](https://sourcefoundry.org/hack/) と [IBM Plex Sans JP](https://www.ibm.com/plex/) を合成した日本語プログラミングフォント
 
-**開発中**
-
 次の4つのスタイルが用意されています。
 
 - PleckJP-Regular
@@ -24,6 +22,14 @@ Homebrew (Mac) の場合は次のコマンドからもダウンロード可能�
 brew tap ryota2357/pleck-jp
 brew install pleck-jp
 ```
+
+## スクリーンショット
+
+![code-cpp-rust](./images/code-cpp-rust.png)
+
+![nerdfonts](./images/nerdfonts.png)
+
+![gotop](./images/gotop.png)
 
 ## ビルド
 

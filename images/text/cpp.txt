@@ -1,0 +1,38 @@
+int main() {
+    // 入力受け取り
+    int n, m, k; cin >> n >> m >> k;
+    WeightedGraph g(n+1); rep(_, 0, m) {
+        int a, b; cin >> a >> b; a--, b--;
+        g[a].push_back({b, 1});
+        g[b].push_back({a, 1});
+    }
+    vector<pint> police(k);
+    rep(i, 0, k) {
+        int p, h; cin >> p >> h; p--;
+        police[i] = {h, p};  // max_hを求めるため、h が first
+    }
+
+    // 超頂点を用意して、辻褄を合わせるような重みの辺を張る
+    auto [max_h, _] = *max_element(All(police));
+    rep(i, 0, k) {
+        auto [h, p] = police[i];
+        g[n].push_back({p, max_h - h});
+    }
+
+    // nからのコストを求めて、max_h 以下なら警備されてる
+    auto cost = dijkstra(g, n);
+    vector<int> ans;
+    rep(i, 0, n) {
+        if (cost[i] <= max_h) {
+            ans.push_back(i + 1);
+        }
+    }
+
+    // 出力
+    cout << ans.size() << endl;
+    each(a, ans) {
+        cout << a << ' ';
+    }
+    cout << '\n';
+    return 0;
+}

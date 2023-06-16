@@ -1,0 +1,91 @@
+impl DeterministicFiniteAutomaton {
+    pub fn from_nfa(nfa: NondeterministicFiniteAutomaton) -> Self {
+        let mut context = Context::new();
+
+        let (start, start_states) = {
+            let mut ret = vec![nfa.start];
+            let mut stack = nfa
+                .next_states(nfa.start, None)
+                .iter()
+                .cloned()
+                .collect::<Vec<_>>();
+            while let Some(state) = stack.pop() {
+                ret.push(state);
+                let next = nfa.next_states(state, None);
+                stack.extend(next.iter().filter(|s| !ret.contains(s)).cloned());
+            }
+            (context.get_state(&ret), ret)
+        };
+
+        let transition = {
+            let mut ret = HashMap::<(DFAState, char), DFAState>::new();
+            let mut waiting = vec![start_states];
+            let mut visited = HashSet::<DFAState>::new();
+            while let Some(look_states) = waiting.pop() {
+                visited.insert(context.get_state(&look_states));
+
+                // 現在の状態から遷移可能な状態を収集する（look_states）。
+                // transition_map[char] = `char` によって遷移できる状態の集合。
+                let mut transition_map = HashMap::<char, HashSet<NFAState>>::new();
+                for look_state in &look_states {
+                    for char in nfa
+                        .next_chars(*look_state)
+                        .iter()
+                        .filter_map(|c| c.is_some().then(|| c.unwrap()))
+                    {
+                        let mut next_states = nfa
+                            .next_states(*look_state, Some(char))
+                            .into_iter()
+                            .chain(nfa.next_states(*look_state, None))
+                            .collect::<Vec<_>>();
+                        let mut stack = next_states
+                            .iter()
+                            .filter(|s| !nfa.next_states(**s, None).is_empty())
+                            .cloned()
+                            .collect::<Vec<_>>();
+                        while let Some(state) = stack.pop() {
+                            let next = nfa.next_states(state, None);
+                            stack.extend(next.iter().filter(|s| !next_states.contains(s)).cloned());
+                            next_states.extend(next);
+                        }
+                        transition_map
+                            .entry(char)
+                            .or_insert(HashSet::new())
+                            .extend(next_states);
+                    }
+                }
+
+                let form_state = context.get_state(&look_states);
+                for (char, next_states) in transition_map {
+                    let next_states_vec: Vec<_> = next_states.iter().cloned().collect();
+                    let to_state = context.get_state(&next_states_vec);
+                    if !visited.contains(&to_state) {
+                        waiting.push(next_states.into_iter().collect());
+                    }
+                    ret.insert((form_state, char), to_state);
+                }
+            }
+            ret
+        };
+
+        let accepts = {
+            let mut ret = HashSet::<DFAState>::new();
+            for (nfa_states, dfa_state) in context.state_map {
+                if nfa_states.iter().any(|s| nfa.accepts.contains(s)) {
+                    ret.insert(dfa_state);
+                }
+            }
+            ret
+        };
+
+        DeterministicFiniteAutomaton {
+            start,
+            accepts,
+            transition,
+        }
+    }
+
+    pub fn next_state(&self, state: DFAState, char: char) -> Option<DFAState> {
+        self.transition.get(&(state, char)).cloned()
+    }
+}
