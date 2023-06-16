@@ -201,6 +201,7 @@ def main():
         source.close()
         util.log("Bundled:", info["path"], "->", BUILD_FILE)
 
+    util.fix_all_glyph_points(font, round=True, addExtrema=True)
     util.font_into_file(font, BUILD_FILE)
     util.log("Generated:", BUILD_FILE)
 

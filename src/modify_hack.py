@@ -33,7 +33,7 @@ def main():
     modify_0(font)
     modify_m(font)
 
-    util.fix_all_glyph_points(font)
+    util.fix_all_glyph_points(font, round=True)
     util.font_into_file(font, BUILD_FILE)
     util.log("Modified:", FONT_FILE, "->", BUILD_FILE)
 

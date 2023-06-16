@@ -22,7 +22,9 @@ def main():
 
     if "Italic" in FONT_STYLE:
         make_italic(font)
-        util.fix_all_glyph_points(font)
+        util.fix_all_glyph_points(font, round=True, addExtrema=True)
+    else:
+        util.fix_all_glyph_points(font, addExtrema=True)
 
     font.selection.all()
     font.autoHint()

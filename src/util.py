@@ -37,10 +37,12 @@ def font_resize_all_width(font, new_width):
         glyph.width = new_width
 
 
-def fix_all_glyph_points(font):
+def fix_all_glyph_points(font, round=False, addExtrema=False):
     for glyph in font.glyphs():
-        glyph.round()
-        glyph.addExtrema("all")
+        if round:
+            glyph.round()
+        if addExtrema:
+            glyph.addExtrema("all")
 
 
 def glyph_riseze_width(glyph, new_width):
