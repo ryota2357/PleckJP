@@ -40,14 +40,17 @@ SOURCES_INFO = [
         "path": join(GLYPHS_PATH, "devicons.ttf"),
         "ranges": [(0xe700, 0xe7c5)],
         "remaps": [(0xe600, 0xe6c5)],
-        "scale": (0.87, 0.87),
-        "translate": (-300, -110),
+        "scale": (0.9, 0.9),
+        "translate": (-405, -145),
         "modify": """
-                0xe700 (1, 1) (-75, 0)  # 
-                0xe78c (1, 1) (-65, 0)  # 
-                0xe78f (1, 1) (-20, 0)  # 
-                0xe7a4 (1, 1) (-80, 0)  # 
-                0xe7c4 (1, 1) (-90, 0)  # 
+                0xe739 (0.9, 0.9) (0, 0) # 
+                0xe7bd (1, 1) (-570, 0)  # 
+                0xe7be (1, 1) (280, 0)   # 
+                0xe7bf (1, 1) (360, 0)   # 
+                0xe7c0 (1, 1) (-40, 0)   # 
+                0xe7c1 (1, 1) (-490, 0)  # 
+                0xe7c2 (1, 1) (-270, 0)  # 
+                0xe7c3 (1, 1) (290, 0)   # 
                 """
     },
     {   # Font Awesome (https://github.com/FortAwesome/Font-Awesome)
