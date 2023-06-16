@@ -2,14 +2,14 @@
 
 > [Hack](https://sourcefoundry.org/hack/) と [IBM Plex Sans JP](https://www.ibm.com/plex/) を合成した日本語プログラミングフォント
 
-次の4つのスタイルが用意されています。
+次の 4 つのスタイルが用意されています。
 
 - PleckJP-Regular
 - PleckJP-Bold
 - PleckJP-Italic
 - PleckJP-BoldItalic
 
-全てのスタイルで [Nerd Fonts](https://www.nerdfonts.com/) も合成されています。
+全てのスタイルで [Nerd Fonts](https://www.nerdfonts.com/) が合成されています。
 
 ## ダウンロード
 
@@ -18,7 +18,7 @@
 
 Homebrew (Mac) の場合は次のコマンドからもダウンロード可能です。
 
-```
+```sh
 brew tap ryota2357/pleck-jp
 brew install pleck-jp
 ```
@@ -39,13 +39,13 @@ docker と docker-compose が必要です。
 
 次のコマンドで docker を用いてビルドを行います。
 
-```
+```sh
 make
 ```
 
 ローカルに fontforge と python3 (fontforge への PYTHONPATH が通ってる) の環境がある場合は次のコマンドでもビルドできます。
 
-```
+```sh
 make generate
 ```
 
@@ -53,4 +53,4 @@ make generate
 
 - フォントの合成スクリプトは MIT License にてライセンスされています。
 - 合成元のフォントデータなどは別のライセンスが適用されています。
-- 詳しくは [LICENSE](LICENSE)を確認してください。
+- 詳しくは [LICENSE](./LICENSE) を確認してください。
