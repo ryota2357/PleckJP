@@ -18,7 +18,7 @@ def main():
     util.font_clear_glyph(font, 0x2003)  # 　(EM SPACE)
     util.font_clear_glyph(font, 0x266a)  # ♪
 
-    # Use Hack Nerd Font glyph
+    # Use Nerd Font glyph
     util.font_clear_glyph(font, 0xe0a0, 0xe0b3)  # Private Use Area
 
     util.font_set_em(font, const.ASCENT, const.DESCENT, const.EM)

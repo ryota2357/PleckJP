@@ -32,8 +32,8 @@ def main():
 def create_braille(font, codepoint, points):
     glyph = font.createChar(codepoint, "uni" + (hex(codepoint)[2:]))
     pen = glyph.glyphPen()
-    for points in points:
-        center_pos = np.array([points[0], points[1] - P.DESCENT])
+    for point in points:
+        center_pos = np.array([point[0], point[1] - P.DESCENT])
         draw_circle(pen, center_pos, 100)
     pen = None
     glyph.width = P.EM // 2
