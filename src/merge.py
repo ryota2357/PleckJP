@@ -100,7 +100,11 @@ def new_font():
     font.fontname = P.FAMILY + "-" + FONT_STYLE
     font.fullname = P.FAMILY + " " + FONT_STYLE
     font.version = P.VERSION
-    font.appendSFNTName('English (US)', 'SubFamily', FONT_STYLE)
+    font.appendSFNTName(
+        "English (US)",
+        "SubFamily",
+        "".join([" " + c if c.isupper() else c for c in FONT_STYLE]).lstrip()
+    )
     font.appendSFNTName(
         "English (US)",
         "UniqueID",
@@ -112,6 +116,12 @@ def new_font():
                 datetime.today().strftime("%F"),
             ]
         ),
+    )
+
+    font.gasp_version = 1
+    font.gasp = (
+        (65535,
+         ('gridfit', 'antialias', 'symmetric-smoothing', 'gridfit+smoothing')),
     )
 
     font.weight = style_prop["weight"]
