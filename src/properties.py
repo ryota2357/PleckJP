@@ -3,17 +3,17 @@ VERSION = "1.0.1"
 ENCODING = 'UnicodeFull'
 
 COPYRIGHT = "\n".join([
-    "[PleckJP]",
-    "Copyright (c) 2023 ryota2357",
+    "[Hack]",
+    "Copyright (c) 2018 Source Foundry Authors",
     "",
     "[IBM Plex]",
     "Copyright © 2017 IBM Corp.",
     "",
-    "[Hack]",
-    "Copyright (c) 2018 Source Foundry Authors",
-    "",
     "[Nerd Fonts]",
     "Copyright (c) 2014, Ryan L McIntyre",
+    "",
+    "[PleckJP]",
+    "Copyright (c) 2023 ryota2357",
 ])
 
 ASCENT = 1618
