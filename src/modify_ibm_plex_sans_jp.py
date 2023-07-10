@@ -78,7 +78,8 @@ def main():
                  "divide", "zero.zero", "uni51F0", "a.alt01", "g.alt01",
                  "g.alt02", "zero.alt01", "minus"):
         util.glyph_riseze_width(font[name], const.EM // 2)
-    util.glyph_riseze_width(font["perthousand.full"], const.EM)
+    for name in ("perthousand.full", "uni51F0"):
+        util.glyph_riseze_width(font[name], const.EM)
 
     modify_whitespace(font)
     resize_all_scale(font)
