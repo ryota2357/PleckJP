@@ -1,13 +1,15 @@
+# pyright: reportMissingImports=false
+
 import psMat
 
 
-def font_into_file(font, filename):
+def font_into_file(font, filename: str) -> None:
     # log("Status:", hex(font.validate()), filename)
     font.generate(filename, flags=("opentype",))
     font.close()
 
 
-def font_clear_glyph(font, start, end=None):
+def font_clear_glyph(font, start: int, end: int | None = None) -> None:
     if end is None:
         font.selection.select(start)
     else:
@@ -16,7 +18,7 @@ def font_clear_glyph(font, start, end=None):
     font.selection.none()
 
 
-def font_set_em(font, ascent, descent, em):
+def font_set_em(font, ascent: int, descent: int, em: int) -> None:
     old_em = font.em
     font.selection.all()
     font.unlinkReferences()
@@ -26,7 +28,7 @@ def font_set_em(font, ascent, descent, em):
     font.selection.none()
 
 
-def font_resize_all_width(font, new_width):
+def font_resize_all_width(font, new_width: int) -> None:
     for glyph in font.glyphs():
         if glyph.width == new_width:
             continue
@@ -36,7 +38,7 @@ def font_resize_all_width(font, new_width):
         glyph.width = new_width
 
 
-def fix_all_glyph_points(font, round=False, addExtrema=False):
+def fix_all_glyph_points(font, round: bool = False, addExtrema: bool = False) -> None:
     for glyph in font.glyphs():
         if round:
             glyph.round()
@@ -44,14 +46,14 @@ def fix_all_glyph_points(font, round=False, addExtrema=False):
             glyph.addExtrema("all")
 
 
-def glyph_riseze_width(glyph, new_width):
+def glyph_riseze_width(glyph, new_width: int) -> None:
     old_width = glyph.width
     mat = psMat.scale(float(new_width) / old_width, 1)
     glyph.transform(mat)
     glyph.width = new_width
 
 
-def draw_square(glyphPen, center, width, height, clockwise=True):
+def draw_square(glyphPen, center: tuple[int, int], width: int, height: int, clockwise: bool = True) -> None:
     dx = round(width / 2)
     dy = round(height / 2)
     center = (round(center[0]), round(center[1]))
@@ -67,5 +69,5 @@ def draw_square(glyphPen, center, width, height, clockwise=True):
     glyphPen.closePath()
 
 
-def log(*msg):
+def log(*msg) -> None:
     print(*msg, flush=True)

@@ -1,4 +1,7 @@
+# pyright: reportMissingImports=false
+
 import sys
+from typing import Literal, TypeGuard
 import fontforge
 import psMat
 import util
@@ -8,13 +11,19 @@ from datetime import datetime
 if len(sys.argv) != 5:
     raise ValueError("Invalid argument")
 
+def is_font_style(style: str) -> TypeGuard[Literal["Regular", "Bold", "Italic", "BoldItalic"]]:
+    return style in ["Regular", "Bold", "Italic", "BoldItalic"]
+
 FONT_EN_TTF = sys.argv[1]
 FONT_JP_TTF = sys.argv[2]
-FONT_STYLE = sys.argv[3]
+if not is_font_style(sys.argv[3]):
+    raise ValueError("Invalid font style")
+else:
+    FONT_STYLE = sys.argv[3]
 BUILD_FILE = sys.argv[4]
 
 
-def main():
+def main() -> None:
     font = new_font()
 
     merge_en(font)
@@ -35,7 +44,7 @@ def main():
     util.log("Generated:", BUILD_FILE)
 
 
-def merge_en(font):
+def merge_en(font) -> None:
     en_font = fontforge.open(FONT_EN_TTF)
     en_font.encoding = P.ENCODING
     font.mergeFonts(en_font)
@@ -43,7 +52,7 @@ def merge_en(font):
     util.log("Merged:", FONT_EN_TTF, "->", BUILD_FILE)
 
 
-def merge_jp(font):
+def merge_jp(font) -> None:
     jp_font = fontforge.open(FONT_JP_TTF)
     font.mergeFonts(jp_font)
     for glyph in jp_font.glyphs():
@@ -57,7 +66,7 @@ def merge_jp(font):
     util.log("Merged:", FONT_JP_TTF, "->", BUILD_FILE)
 
 
-def make_italic(font):
+def make_italic(font) -> None:
     PI = 3.14159265358979323846
     rot_rad = -1 * P.ITALICANGLE * PI / 180
     transform_mat = psMat.skew(rot_rad)

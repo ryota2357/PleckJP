@@ -1,3 +1,5 @@
+# pyright: reportMissingImports=false
+
 import sys
 import fontforge
 import psMat
@@ -11,7 +13,7 @@ FONT_FILE = sys.argv[1]
 BUILD_FILE = sys.argv[2]
 
 
-def main():
+def main() -> None:
     font = fontforge.open(FONT_FILE)
 
     # Remove kerning info
@@ -89,7 +91,7 @@ def main():
     util.log("Modified:", FONT_FILE, "->", BUILD_FILE)
 
 
-def resize_all_scale(font):
+def resize_all_scale(font) -> None:
     scale = 0.82
     x_to_center = const.EM * (1 - scale) / 2
 
@@ -110,28 +112,28 @@ def resize_all_scale(font):
             util.log(f"unkown scale: {width} name: {name}")
 
 
-def modify_whitespace(font):
+def modify_whitespace(font) -> None:
     # NOTE: if modify 0x3000, it also apply to 0x2003 (EM SPACE)
     pen = font[0x3000].glyphPen(replace=False)
 
     # draw square frame
     util.draw_square(pen,
                      (const.EM // 2, (const.EM - const.DESCENT) // 2),
-                     const.EM * 0.8, const.EM * 0.8)
+                     round(const.EM * 0.8), round(const.EM * 0.8))
     util.draw_square(pen,
                      (const.EM // 2, (const.EM - const.DESCENT) // 2),
-                     const.EM * 0.7, const.EM * 0.7,
+                     round(const.EM * 0.7), round(const.EM * 0.7),
                      clockwise=False)
 
     util.draw_square(pen,
                      (const.EM // 2, (const.EM - const.DESCENT) // 2),
-                     const.EM * 0.35, const.EM * 2)
+                     round(const.EM * 0.35), round(const.EM * 2))
     util.draw_square(pen,
                      (0, (const.EM - const.DESCENT) // 2),
-                     const.EM * 0.5, const.EM * 0.35)
+                     round(const.EM * 0.5), round(const.EM * 0.35))
     util.draw_square(pen,
                      (const.EM, (const.EM - const.DESCENT) // 2),
-                     const.EM * 0.5, const.EM * 0.35)
+                     round(const.EM * 0.5), round(const.EM * 0.35))
     pen = None
 
     font.selection.select(0x3000)

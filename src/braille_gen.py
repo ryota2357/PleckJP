@@ -1,3 +1,5 @@
+# pyright: reportMissingImports=false
+
 import sys
 from os.path import join, dirname
 import json
@@ -14,7 +16,7 @@ BRAILLE_JSON_PATH = join(dirname(__file__), "braille.json")
 BUILD_FILE = sys.argv[1]
 
 
-def main():
+def main() -> None:
     font = new_font()
 
     with open(BRAILLE_JSON_PATH, "r") as f:
@@ -29,7 +31,7 @@ def main():
     util.log("Generated:", BUILD_FILE)
 
 
-def create_braille(font, codepoint, points):
+def create_braille(font, codepoint: int, points: list[tuple[int, int]]) -> None:
     glyph = font.createChar(codepoint, "uni" + (hex(codepoint)[2:]))
     pen = glyph.glyphPen()
     for point in points:
@@ -40,8 +42,8 @@ def create_braille(font, codepoint, points):
     glyph.round()
 
 
-def draw_circle(pen, center_pos, radius):
-    def vector_from_rad(rad):
+def draw_circle(pen, center_pos: int, radius: int) -> None:
+    def vector_from_rad(rad: float):
         return np.array([cos(rad), sin(rad)])
 
     def intersection(normal_vec1, pos1, normal_vec2, pos2):

@@ -1,3 +1,21 @@
+from typing import Final, Literal, TypedDict
+
+
+class StyleProperty(TypedDict):
+    weight: Literal['Book', 'Bold']
+    os2_weight: int
+    os2_stylemap: int
+    panose_weight: int
+    panose_letterform: int
+
+
+class StylePropertyAll(TypedDict):
+    Regular: StyleProperty
+    Bold: StyleProperty
+    Italic: StyleProperty
+    BoldItalic: StyleProperty
+
+
 FAMILY = "PleckJP"
 VERSION = "1.0.2"
 ENCODING = 'UnicodeFull'
@@ -23,7 +41,7 @@ ITALICANGLE = -11
 UNDERLINE_POS = -255
 UNDERLINE_HEIGHT = 90
 
-STYLE_PROPERTY = {
+STYLE_PROPERTY: Final[StylePropertyAll] = {
     'Regular': {
         'weight': 'Book',
         'os2_weight': 400,

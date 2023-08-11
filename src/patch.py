@@ -1,3 +1,5 @@
+# pyright: reportMissingImports=false
+
 import sys
 import fontforge
 import util
@@ -10,7 +12,7 @@ PATCH_FILES = sys.argv[2:-1]
 BUILD_FILE = sys.argv[-1]
 
 
-def main():
+def main() -> None:
     font = fontforge.open(FONT_FILE)
     for patch_file in PATCH_FILES:
         font.mergeFonts(patch_file)

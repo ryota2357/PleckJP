@@ -1,6 +1,10 @@
+# pyright: reportMissingImports=false
+
 import sys
 import ast
 from os.path import join, basename, splitext
+from typing import Final, TypedDict
+from collections.abc import Callable
 import fontforge
 import psMat
 import util
@@ -28,7 +32,23 @@ BUILD_FILE = sys.argv[2]
 #      modify: string
 #          The script of glyph transforming
 #  }
-SOURCES_INFO = [
+class SourceInfoRequiredKeys(TypedDict):
+    path: str
+    ranges: list[tuple[int, ...]]
+    remaps: list[tuple[int, ...] | None]
+    scale: tuple[float, float]
+    translate: tuple[int, int]
+
+
+class SourceInfoOptionalKeys(TypedDict, total=False):
+    modify: str
+
+
+class SourceInfo(SourceInfoRequiredKeys, SourceInfoOptionalKeys):
+    pass
+
+
+SOURCES_INFO: Final[list[SourceInfo]] = [
     {   # Seti-UI + Custom
         "path": join(GLYPHS_PATH, "original-source.otf"),
         "ranges": [(0xe5fa, 0xe6ad)],
@@ -179,7 +199,7 @@ SOURCES_INFO = [
 ]
 
 
-def main():
+def main() -> None:
     font = new_font()
     for info in SOURCES_INFO:
         source = fontforge.open(info["path"])
@@ -206,7 +226,7 @@ def main():
     util.log("Generated:", BUILD_FILE)
 
 
-def remap_range(font, from_range, to_range):
+def remap_range(font, from_range: tuple[int, int] | None, to_range: tuple[int, int]) -> None:
     if from_range is None:
         return
     next_to_codepoint, next_from_codepoint = _remap_util(
@@ -234,7 +254,7 @@ def remap_range(font, from_range, to_range):
         raise ValueError("Invalid range or remap (remap is smaller than range)")
 
 
-def _remap_util(font, from_range, to_range):
+def _remap_util(font, from_range: tuple[int, int], to_range: tuple[int, int]) -> tuple[Callable[[], int | None], Callable[[], int | None]]:
     fixed_from = _tuple_to_range(from_range or to_range)
     fixed_to = _tuple_to_range(to_range)
     remain_skip_count = len(fixed_from) - len(fixed_to)
@@ -268,7 +288,7 @@ def _remap_util(font, from_range, to_range):
     return next_to_codepoint, next_from_codepoint
 
 
-def transform_all(font, scale, translate):
+def transform_all(font, scale: tuple[float, float], translate: tuple[int, int]) -> None:
     scale = psMat.scale(*scale)
     translate = psMat.translate(*translate)
     transform = psMat.compose(scale, translate)
@@ -282,7 +302,7 @@ def transform_all(font, scale, translate):
     font.selection.none()
 
 
-def modify(font, script):
+def modify(font, script: str) -> None:
     for line in script.split(sep="\n"):
         line = line.strip().replace(" ", "").replace("(", ",(")  # )) <- nvim の自動インデントがおかしくなるので
         if len(line) < 1 or line.startswith("#"):
@@ -319,9 +339,9 @@ def new_font():
     return font
 
 
-def copy_range(font, source, range_):
-    range_ = iter(_tuple_to_range(range_))
-    codepoint = next(range_, None)
+def copy_range(font, source, range_: tuple[int, int | None]) -> None:
+    range_iter = iter(_tuple_to_range(range_))
+    codepoint = next(range_iter, None)
     while codepoint:
         source.selection.select(codepoint)
         source.copy()
@@ -333,10 +353,10 @@ def copy_range(font, source, range_):
         except TypeError as e:
             if str(e) != "No such glyph":
                 raise
-        codepoint = next(range_, None)
+        codepoint = next(range_iter, None)
 
 
-def _tuple_to_range(tuple_):
+def _tuple_to_range(tuple_: tuple[int, int | None]) -> range:
     fixed = (*tuple_, None)
     start = fixed[0]
     stop = (fixed[1] or fixed[0]) + 1

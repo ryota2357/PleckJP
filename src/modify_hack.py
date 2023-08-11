@@ -1,3 +1,5 @@
+# pyright: reportMissingImports=false
+
 import sys
 import fontforge
 import psMat
@@ -11,7 +13,7 @@ FONT_FILE = sys.argv[1]
 BUILD_FILE = sys.argv[2]
 
 
-def main():
+def main() -> None:
     font = fontforge.open(FONT_FILE)
 
     # Use IBMPlexSansJP glyph
@@ -38,8 +40,8 @@ def main():
     util.log("Modified:", FONT_FILE, "->", BUILD_FILE)
 
 
-def fix_subscript_numbers(font):
-    def cp(from_, to):
+def fix_subscript_numbers(font) -> None:
+    def cp(from_: int | str, to: int | str):
         font.selection.select(from_)
         font.copy()
         font.selection.select(to)
@@ -47,7 +49,7 @@ def fix_subscript_numbers(font):
 
     # NOTE: After 0x10000 Hack has different glyph.
     #       So, you can't use the encoding number.
-    def subs(code):
+    def subs(code: int) -> str:
         hex_str = hex(code)[2:].upper().zfill(4)
         return "uni" + hex_str + ".subs"
     for i in range(10):
@@ -55,7 +57,7 @@ def fix_subscript_numbers(font):
     font.selection.none()
 
 
-def create_up_tack(font):
+def create_up_tack(font) -> None:
     # 0x22a5 ⊥ (UP TACK)
     font.selection.select(0x22a4)  # ⊤
     font.copy()
@@ -70,15 +72,15 @@ def create_up_tack(font):
     font.selection.none()
 
 
-def modify_0(font):
+def modify_0(font) -> None:
     # Cover outer of 「0」
     pen = font[0x30].glyphPen(replace=False)
     util.draw_square(pen,
-                     (const.EM // 4, const.EM * 0.3),
-                     const.EM * 0.45, const.EM * 0.67)
+                     (const.EM // 4, round(const.EM * 0.3)),
+                     round(const.EM * 0.45), round(const.EM * 0.67))
     util.draw_square(pen,
-                     (const.EM // 4, const.EM * 0.3),
-                     const.EM * 0.10, const.EM * 0.32,
+                     (const.EM // 4, round(const.EM * 0.3)),
+                     round(const.EM * 0.10), round(const.EM * 0.32),
                      clockwise=False)
     pen = None
 
@@ -95,7 +97,7 @@ def modify_0(font):
     font.selection.none()
 
 
-def modify_m(font):
+def modify_m(font) -> None:
     # Hold original 「m」
     font.selection.select(0x6D)
     font.copy()
@@ -104,8 +106,8 @@ def modify_m(font):
     glyph = font[0x6D]
     pen = glyph.glyphPen(replace=False)
     util.draw_square(pen,
-                     (const.EM // 4, const.EM * 0.05),
-                     const.EM * 0.15, const.EM * 0.13)
+                     (const.EM // 4, round(const.EM * 0.05)),
+                     round(const.EM * 0.15), round(const.EM * 0.13))
     font.intersect()
 
     # Create a cover that has a hole
