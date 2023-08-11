@@ -13,26 +13,23 @@ MERGE_SCRIPT := src/fontforge_/merge.py
 BUNDLE_NF_SCRIPT := src/fontforge_/bundle_nf.py
 BRAILLE_GEN_SCRIPT := src/fontforge_/braille_gen.py
 PATCH_SCRIPT := src/fontforge_/patch.py
-FONTTOOLS_SCRIPT := src/fonttools_/fonttools.py
+FONTTOOLS_SCRIPT := src/fonttools_/main.py
 
 
 .PHONY: all
 all:
-	@docker-compose up
-
-.PHONY: generate
-generate: $(CACHE_DIR) $(BUILD_DIR) $(addprefix $(BUILD_DIR)/PleckJP-, $(addsuffix .ttf, $(FONT_STYLES)))
-	@echo "Completed."
+	@docker-compose up fontforge
+	@docker-compose up fonttools
 
 .PHONY: release
 release:
-	@echo "Current version is" $(shell python -c "import src.properties as p; print(p.VERSION, end='')")
+	@echo "Current version is" $(shell python -c "import src.fontforge_.properties as p; print(p.VERSION, end='')")
 	@read -p "Type new version: " new_version && \
-		sed -i '' 's/^VERSION =.*/VERSION = "'$$new_version'"/' src/properties.py
+		sed -i '' 's/^VERSION =.*/VERSION = "'$$new_version'"/' src/fontforge_/properties.py
 	@make clean
 	@make
 	@cp LICENSE build/
-	@version=$$(python -c "import src.properties as p; print(p.VERSION, end='')") && \
+	@version=$$(python -c "import src.fontforge_.properties as p; print(p.VERSION, end='')") && \
 		cd build && \
 		zip -r PleckJP_v$$version.zip * && \
 		shasum -a 256 PleckJP_v$$version.zip | awk '{print $$1}' > PleckJP_v$$version.sha256
@@ -43,19 +40,23 @@ clean:
 	@rm -f $(ERROR_LOG_FILE)
 	@rm -rf $(CACHE_DIR) $(BUILD_DIR)
 
+.PHONY: fontforge
+fontforge: $(CACHE_DIR) $(addprefix $(CACHE_DIR)/PleckJP-, $(addsuffix .ttf, $(FONT_STYLES)))
+	@echo "Completed: fontforge"
+
+.PHONY: fonttools
+fonttools: $(BUILD_DIR) $(addprefix $(BUILD_DIR)/PleckJP-, $(addsuffix .ttf, $(FONT_STYLES)))
+	@echo "Completed: fonttools"
 
 # Do not renove intermediate TTF files
 .SECONDARY: $(wildcard *.ttf)
 
-$(BUILD_DIR)/PleckJP-%.ttf: $(CACHE_DIR)/PleckJP-%.ttf
-	@cp $< $@
-
 # Fix by Fonttools
-$(CACHE_DIR)/PleckJP-%.ttf: $(CACHE_DIR)/patched-PleckJP-%.ttf $(FONTTOOLS_SCRIPT)
+$(BUILD_DIR)/PleckJP-%.ttf: $(CACHE_DIR)/PleckJP-%.ttf $(FONTTOOLS_SCRIPT)
 	@python3 $(FONTTOOLS_SCRIPT) $< $(CACHE_DIR) $@ 2>> $(ERROR_LOG_FILE)
 
 # Patch
-$(CACHE_DIR)/patched-PleckJP-%.ttf: $(CACHE_DIR)/merged-PleckJP-%.ttf $(CACHE_DIR)/NerdFonts.ttf $(CACHE_DIR)/Braille.ttf $(PATCH_SCRIPT)
+$(CACHE_DIR)/PleckJP-%.ttf: $(CACHE_DIR)/merged-PleckJP-%.ttf $(CACHE_DIR)/NerdFonts.ttf $(CACHE_DIR)/Braille.ttf $(PATCH_SCRIPT)
 	@python3 $(PATCH_SCRIPT) $< $(word 2, $^) $(word 3, $^) $@ 2>> $(ERROR_LOG_FILE)
 
 # Generate patch glyphs

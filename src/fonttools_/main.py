@@ -1,5 +1,6 @@
 import sys
-from os.path import join, basename
+import os
+from os.path import join, basename, splitext
 from xml.etree.ElementTree import ElementTree, parse as xml_parse
 import fontTools.ttx
 
@@ -12,7 +13,7 @@ BUILD_FILE = sys.argv[3]
 
 
 def main() -> None:
-    ttx_file_path = join(CACHE_DIR, f"{basename(FONT_FILE)}.ttx")
+    ttx_file_path = join(CACHE_DIR, f"{splitext(basename(FONT_FILE))[0]}.ttx")
 
     xml = dump_ttx(ttx_file_path, "post")
     fix_post_table(xml)
@@ -31,6 +32,7 @@ def main() -> None:
             ttx_file_path,
         ]
     )
+    os.remove(ttx_file_path)
 
 
 def dump_ttx(ttx_file_path: str, table: str) -> ElementTree:
