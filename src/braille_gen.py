@@ -5,6 +5,7 @@ from os.path import join, dirname
 import json
 from math import sin, cos, pi as PI
 import numpy as np
+from numpy.typing import NDArray
 import fontforge
 import util
 import properties as P
@@ -42,11 +43,11 @@ def create_braille(font, codepoint: int, points: list[tuple[int, int]]) -> None:
     glyph.round()
 
 
-def draw_circle(pen, center_pos: int, radius: int) -> None:
-    def vector_from_rad(rad: float):
+def draw_circle(pen, center_pos: NDArray, radius: int) -> None:
+    def vector_from_rad(rad: float) -> NDArray:
         return np.array([cos(rad), sin(rad)])
 
-    def intersection(normal_vec1, pos1, normal_vec2, pos2):
+    def intersection(normal_vec1: NDArray, pos1: NDArray, normal_vec2: NDArray, pos2: NDArray) -> tuple[int, int]:
         # a(x - x1) + b(y - y1) = 0 <=> ax + by = ax1 + by1
         # c(x - x2) + d(y - y2) = 0 <=> cx + by = cx2 + by2
         #  ∴ A X = K
@@ -64,7 +65,7 @@ def draw_circle(pen, center_pos: int, radius: int) -> None:
             c * x2 + d * y2
         ])
         mat_X = mat_A.I @ vec_K
-        return (mat_X[0, 0], mat_X[0, 1])
+        return (round(mat_X[0, 0]), round(mat_X[0, 1]))
 
     for i in range(4):
         vec1 = vector_from_rad(-1 * i * PI / 2)
