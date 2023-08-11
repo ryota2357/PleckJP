@@ -16,8 +16,8 @@ class StylePropertyAll(TypedDict):
     BoldItalic: StyleProperty
 
 
-VERSION = "1.0.2"
 FAMILY = "PleckJP"
+VERSION = "1.1.0"
 ENCODING = 'UnicodeFull'
 
 COPYRIGHT = "\n".join([
