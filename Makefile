@@ -6,14 +6,14 @@ GLYPHS_DIR := resources/glyphs
 
 ERROR_LOG_FILE := error.txt
 
-MODIFY_HACK_SCRIPT := src/modify_hack.py
-MODIFY_IBMPLEX_SCRIPT := src/modify_ibm_plex_sans_jp.py
-MODIFY_HACK_NERD_SCRIPT := src/modify_hack_nerd.py
-MERGE_SCRIPT := src/merge.py
-BUNDLE_NF_SCRIPT := src/bundle_nf.py
-BRAILLE_GEN_SCRIPT := src/braille_gen.py
-PATCH_SCRIPT := src/patch.py
-FONTTOOLS_SCRIPT := src/fonttools.py
+MODIFY_HACK_SCRIPT := src/fontforge_/modify_hack.py
+MODIFY_IBMPLEX_SCRIPT := src/fontforge_/modify_ibm_plex_sans_jp.py
+MODIFY_HACK_NERD_SCRIPT := src/fontforge_/modify_hack_nerd.py
+MERGE_SCRIPT := src/fontforge_/merge.py
+BUNDLE_NF_SCRIPT := src/fontforge_/bundle_nf.py
+BRAILLE_GEN_SCRIPT := src/fontforge_/braille_gen.py
+PATCH_SCRIPT := src/fontforge_/patch.py
+FONTTOOLS_SCRIPT := src/fonttools_/fonttools.py
 
 
 .PHONY: all
