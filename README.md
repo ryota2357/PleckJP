@@ -37,16 +37,10 @@ brew install pleck-jp
 
 docker と docker-compose が必要です。
 
-次のコマンドで docker を用いてビルドを行います。
+次のコマンドでビルドを行います。
 
 ```sh
 make
-```
-
-ローカルに fontforge と python3 (fontforge への PYTHONPATH が通ってる) の環境がある場合は次のコマンドでもビルドできます。
-
-```sh
-make generate
 ```
 
 ## ライセンス
