@@ -33,6 +33,11 @@ brew install pleck-jp
 
 ![gotop](./images/gotop.png)
 
+## 関連記事
+
+- [プログラミング用合成フォント PleckJP を作った](https://ryota2357.com/blog/2023/dev-font-pleckjp/)
+- [プログラミング用合成フォント PleckJP の合成スクリプトの実装解説](https://ryota2357.com/blog/2023/pleck-jp-impl-exp/)
+
 ## ビルド
 
 docker と docker-compose が必要です。
