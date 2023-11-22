@@ -15,5 +15,5 @@ ENV LANGUAGE ja_JP:en
 ENV LC_ALL ja_JP.UTF-8
 
 # Add python module
-RUN pip install --upgrade --no-cache-dir 'pip>=23.2.1' && \
-    pip install --no-cache-dir 'fonttools>=4.42.0'
+RUN pip install --upgrade --no-cache-dir 'pip>=23.3.1' && \
+    pip install --no-cache-dir 'fonttools>=4.45.0'

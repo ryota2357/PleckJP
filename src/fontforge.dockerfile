@@ -42,5 +42,5 @@ RUN cd fontforge     && \
 
 # Add python module
 ENV PYTHONPATH=/usr/local/lib/python3/dist-packages/
-RUN pip install --upgrade --no-cache-dir 'pip>=23.2.1' &&\
-    pip install --no-cache-dir 'numpy>=1.25.2'
+RUN pip install --upgrade --no-cache-dir 'pip>=23.3.1' &&\
+    pip install --no-cache-dir 'numpy>=1.26.2'
