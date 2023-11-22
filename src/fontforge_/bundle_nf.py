@@ -51,8 +51,8 @@ class SourceInfo(SourceInfoRequiredKeys, SourceInfoOptionalKeys):
 SOURCES_INFO: Final[list[SourceInfo]] = [
     {   # Seti-UI + Custom
         "path": join(GLYPHS_PATH, "original-source.otf"),
-        "ranges": [(0xe5fa, 0xe6ad)],
-        "remaps": [(0xe4fa, 0xe5ad)],
+        "ranges": [(0xe5fa, 0xe6b1)],
+        "remaps": [(0xe4fa, 0xe5b1)],
         "scale": (0.83, 0.83),
         "translate": (-310, -140)
     },
@@ -169,7 +169,7 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
     },
     {   # Font Logos (https://github.com/Lukas-W/font-logos)
         "path": join(GLYPHS_PATH, "font-logos.ttf"),
-        "ranges": [(0xf300, 0xf32f)],
+        "ranges": [(0xf300, 0xf372)],
         "remaps": [None],
         "scale": (0.73, 0.73),
         "translate": (0, 150)
