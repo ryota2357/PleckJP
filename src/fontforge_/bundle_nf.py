@@ -139,7 +139,9 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
         "scale": (0.97, 0.887),
         "translate": (0, -109),
         "modify": """
-                0xe0a0 (1, 1) (-60, 0)  # 
+                0xe0a0 (1, 1)     (-60, 0)  # 
+                0xe0b0 (1, 0.995) (-74, 10) # 
+                0xe0b2 (1, 0.995) (0, 10)   # 
                 """
     },
     {   # Powerline Extra Symbols (https://github.com/ryanoasis/powerline-extra-symbols)
