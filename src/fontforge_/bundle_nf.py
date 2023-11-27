@@ -51,8 +51,8 @@ class SourceInfo(SourceInfoRequiredKeys, SourceInfoOptionalKeys):
 SOURCES_INFO: Final[list[SourceInfo]] = [
     {   # Seti-UI + Custom
         "path": join(GLYPHS_PATH, "original-source.otf"),
-        "ranges": [(0xe5fa, 0xe6b1)],
-        "remaps": [(0xe4fa, 0xe5b1)],
+        "ranges": [(0xe5fa, 0xe6b2)],
+        "remaps": [(0xe4fa, 0xe5b2)],
         "scale": (0.83, 0.83),
         "translate": (-310, -140)
     },
