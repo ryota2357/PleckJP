@@ -51,13 +51,13 @@ class SourceInfo(SourceInfoRequiredKeys, SourceInfoOptionalKeys):
 SOURCES_INFO: Final[list[SourceInfo]] = [
     {   # Seti-UI + Custom
         "path": join(GLYPHS_PATH, "original-source.otf"),
-        "ranges": [(0xe5fa, 0xe6b2)],
-        "remaps": [(0xe4fa, 0xe5b2)],
+        "ranges": [(0xe5fa, 0xe6b5)],
+        "remaps": [(0xe4fa, 0xe5b5)],
         "scale": (0.83, 0.83),
         "translate": (-310, -140)
     },
     {   # Devicons (https://vorillaz.github.io/devicons/)
-        "path": join(GLYPHS_PATH, "devicons.ttf"),
+        "path": join(GLYPHS_PATH, "devicons", "devicons.ttf"),
         "ranges": [(0xe700, 0xe7c5)],
         "remaps": [(0xe600, 0xe6c5)],
         "scale": (0.9, 0.9),
@@ -75,20 +75,19 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
     },
     {   # Font Awesome (https://github.com/FortAwesome/Font-Awesome)
         "path": join(GLYPHS_PATH, "font-awesome", "FontAwesome.otf"),
-        "ranges": [(0xf000, 0xf2e0)],
-        "remaps": [None],
+        "ranges": [(0xed00, 0xefc1), (0xf000, 0xf2ff)],
+        "remaps": [None, None],
         "scale": (0.8, 0.8),
-        "translate": (-100, 80),
+        "translate": (-100, 160),
         "modify": """
-                [0xf0d7, 0xf0da] (1, 1) (45, 0)   #  ~ 
-                [0xf0dd, 0xf0de] (1, 1) (45, 0)   #  ~ 
-                [0xf100, 0xf103] (1, 1) (60, 0)   #  ~ 
-                [0xf104, 0xf105] (1, 1) (240, 0)  #  ~ 
-                [0xf106, 0xf107] (1, 1) (55, 0)   #  ~ 
-                [0xf175, 0xf176] (1, 1) (160, 0)  #  ~ 
-                0xf276           (1, 1) (45, 0)   # 
-                0xf294           (1, 1) (100, 0)  # 
-                [0xf2c7, 0xf2cb] (1, 1) (40, 0)   #  ~ 
+                [0xf0d7, 0xf0da] (1, 1) (80, 0)   #  ~ 
+                [0xf0dd, 0xf0de] (1, 1) (80, 0)   #  ~ 
+                0xf0eb           (1, 1) (20, 0)   # 
+                [0xf104, 0xf105] (1, 1) (220, 0)  #  ~ 
+                [0xf175, 0xf176] (1, 1) (85, 0)   #  ~ 
+                0xf276           (1, 1) (115, 0)  # 
+                0xf294           (1, 1) (115, 0)  # 
+                [0xf2c7, 0xf2cb] (1, 1) (135, 0)  #  ~ 
                 """
     },
     {   # Font Awesome Extension (https://github.com/AndreLZGava/font-awesome-extension)
@@ -145,21 +144,26 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
                 """
     },
     {   # Powerline Extra Symbols (https://github.com/ryanoasis/powerline-extra-symbols)
-        "path": join(GLYPHS_PATH, "PowerlineExtraSymbols.otf"),
-        "ranges": [(0xe0a3,), (0xe0b4, 0xe0c8), (0xe0ca,), (0xe0cc, 0xe0d4)],
-        "remaps": [None, None, None, None],
+        "path": join(GLYPHS_PATH, "powerline-extra", "PowerlineExtraSymbols.otf"),
+        "ranges": [(0xe0a3,), (0xe0b4, 0xe0c8), (0xe0ca,), (0xe0cc, 0xe0d4), (0xe0d6, 0xe0d7)],
+        "remaps": [None, None, None, None, None],
         "scale": (1, 1),
         "translate": (0, 0),
         "modify": """
-                0xe0a3           (0.85, 0.85) (0, 0)   # 
-                [0xe0b4, 0xe0b7] (0.84, 0.84) (0, 23)  #  ~ 
-                [0xe0b8, 0xe0bf] (0.41, 0.82) (0, 0)   #  ~ 
-                [0xe0c0, 0xe0c3] (0.87, 0.87) (0, 0)   #  ~ 
-                [0xe0c4, 0xe0c7] (0.81, 0.81) (0, 40)  #  ~ 
-                0xe0c8           (0.88, 0.88) (0, 50)  # 
-                0xe0ca           (0.88, 0.88) (0, 50)  # 
-                [0xe0cc, 0xe0d2] (0.82, 0.82) (0, 0)   #  ~ 
-                0xe0d4           (0.82, 0.82) (0, 0)   # 
+                0xe0a3           (0.85, 0.85)  (0, 0)      # 
+                0xe0b4           (0.84, 0.845) (-70, 22)   # 
+                0xe0b5           (0.84, 0.84)  (-273, 60)  # 
+                0xe0b6           (0.84, 0.845) (-20, 14)   # 
+                0xe0b7           (0.84, 0.84)  (0, 60)     # 
+                [0xe0b8, 0xe0bf] (0.41, 0.82)  (0, 0)      #  ~ 
+                [0xe0c0, 0xe0c3] (0.87, 0.87)  (0, 0)      #  ~ 
+                [0xe0c4, 0xe0c7] (0.81, 0.81)  (0, 40)     #  ~ 
+                0xe0c8           (0.88, 0.88)  (0, 50)     # 
+                0xe0ca           (0.88, 0.88)  (0, 50)     # 
+                [0xe0cc, 0xe0d2] (0.82, 0.82)  (0, 0)      #  ~ 
+                0xe0d4           (0.82, 0.82)  (0, 0)      # 
+                0xe0d6           (0.767, 0.82) (-58, -4)   # 
+                0xe0d7           (0.767, 0.82) (0, -4)     # 
                 """
     },
     {   # IEC Power Symbols (https://unicodepowersymbol.com/)
@@ -171,7 +175,7 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
     },
     {   # Font Logos (https://github.com/Lukas-W/font-logos)
         "path": join(GLYPHS_PATH, "font-logos.ttf"),
-        "ranges": [(0xf300, 0xf372)],
+        "ranges": [(0xf300, 0xf375)],
         "remaps": [None],
         "scale": (0.73, 0.73),
         "translate": (0, 150)
@@ -189,13 +193,14 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
     },
     {   # Codicons (https://github.com/microsoft/vscode-codicons)
         "path": join(GLYPHS_PATH, "codicons", "codicon.ttf"),
-        "ranges": [(0xea60, 0xebeb)],
+        "ranges": [(0xea60, 0xec1e)],
         "remaps": [None],
         "scale": (0.8, 0.8),
         "translate": (-350, -220),
         "modify": """
                 [0xea9d, 0xeaa0] (1, 1) (50, 0)  #  ~ 
                 [0xeaa6, 0xeaa9] (1, 1) (40, 0)  #  ~ 
+                0xeafc           (1, 1) (40, 0)  # 
                 """
     }
 ]
