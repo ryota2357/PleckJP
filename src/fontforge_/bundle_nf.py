@@ -181,7 +181,7 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
         "translate": (0, 150)
     },
     {   # Pomicons (https://github.com/gabrielelana/pomicons)
-        "path": join(GLYPHS_PATH, "Pomicons.otf"),
+        "path": join(GLYPHS_PATH, "pomicons", "Pomicons.otf"),
         "ranges": [(0xe000, 0xe00a)],
         "remaps": [None],
         "scale": (0.87, 0.87),
