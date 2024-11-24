@@ -1,20 +1,19 @@
-version: "3"
 services:
     fontforge:
         build:
             context: .
             dockerfile: ./src/fontforge.dockerfile
         volumes:
-            - .:/home/fontforge
-        container_name: fontforge
-        working_dir: /home/fontforge
+            - .:/home/pleckjp-fontforge
+        working_dir: /home/pleckjp-fontforge
+        container_name: pleckjp-fontforge
         command: make -j4 fontforge
     fonttools:
         build:
             context: .
             dockerfile: ./src/fonttools.dockerfile
         volumes:
-            - .:/home/fonttools
-        container_name: fonttools
-        working_dir: /home/fonttools
+            - .:/home/pleckjp-fonttools
+        working_dir: /home/pleckjp-fonttools
+        container_name: pleckjp-fonttools
         command: make -j4 fonttools
