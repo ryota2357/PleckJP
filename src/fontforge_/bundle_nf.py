@@ -48,30 +48,21 @@ class SourceInfo(SourceInfoRequiredKeys, SourceInfoOptionalKeys):
     pass
 
 
+# Ref: https://github.com/ryanoasis/nerd-fonts/wiki/Glyph-Sets-and-Code-Points
 SOURCES_INFO: Final[list[SourceInfo]] = [
     {   # Seti-UI + Custom
         "path": join(GLYPHS_PATH, "original-source.otf"),
-        "ranges": [(0xe5fa, 0xe6b5)],
-        "remaps": [(0xe4fa, 0xe5b5)],
+        "ranges": [(0xe5fa, 0xe6b7)],
+        "remaps": [(0xe4fa, 0xe5b7)],
         "scale": (0.83, 0.83),
         "translate": (-310, -140)
     },
     {   # Devicons (https://vorillaz.github.io/devicons/)
         "path": join(GLYPHS_PATH, "devicons", "devicons.ttf"),
-        "ranges": [(0xe700, 0xe7c5)],
-        "remaps": [(0xe600, 0xe6c5)],
+        "ranges": [(0xe700, 0xe8ef)],
+        "remaps": [(0xe600, 0xe7ef)],
         "scale": (0.9, 0.9),
         "translate": (-405, -145),
-        "modify": """
-                0xe739 (0.9, 0.9) (0, 0) # 
-                0xe7bd (1, 1) (-570, 0)  # 
-                0xe7be (1, 1) (280, 0)   # 
-                0xe7bf (1, 1) (360, 0)   # 
-                0xe7c0 (1, 1) (-40, 0)   # 
-                0xe7c1 (1, 1) (-490, 0)  # 
-                0xe7c2 (1, 1) (-270, 0)  # 
-                0xe7c3 (1, 1) (290, 0)   # 
-                """
     },
     {   # Font Awesome (https://github.com/FortAwesome/Font-Awesome)
         "path": join(GLYPHS_PATH, "font-awesome", "FontAwesome.otf"),
@@ -155,8 +146,13 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
                 0xe0b5           (0.84, 0.84)  (-273, 60)  # 
                 0xe0b6           (0.84, 0.845) (-20, 14)   # 
                 0xe0b7           (0.84, 0.84)  (0, 60)     # 
-                [0xe0b8, 0xe0bf] (0.41, 0.82)  (0, 0)      #  ~ 
-                [0xe0c0, 0xe0c3] (0.87, 0.87)  (0, 0)      #  ~ 
+                0xe0b8           (0.41, 0.818) (-70, 6)    # 
+                [0xe0b9, 0xe0ba] (0.41, 0.818) (0, 3)      #  , 
+                0xe0bb           (0.41, 0.818) (-50, 6)    # 
+                0xe0bc           (0.41, 0.818) (-70, 3)    # 
+                [0xe0bd, 0xe0be] (0.41, 0.818) (0, 3)      #  , 
+                0xe0bf           (0.41, 0.818) (-50, 3)    # 
+                [0xe0c0, 0xe0c3] (0.87, 0.873) (0, 3)      #  ~ 
                 [0xe0c4, 0xe0c7] (0.81, 0.81)  (0, 40)     #  ~ 
                 0xe0c8           (0.88, 0.88)  (0, 50)     # 
                 0xe0ca           (0.88, 0.88)  (0, 50)     # 
@@ -175,7 +171,7 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
     },
     {   # Font Logos (https://github.com/Lukas-W/font-logos)
         "path": join(GLYPHS_PATH, "font-logos.ttf"),
-        "ranges": [(0xf300, 0xf375)],
+        "ranges": [(0xf300, 0xf381)],
         "remaps": [None],
         "scale": (0.73, 0.73),
         "translate": (0, 150)
