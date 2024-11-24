@@ -1,4 +1,4 @@
-FROM ubuntu:22.10
+FROM ubuntu:24.10
 
 RUN apt-get update && apt-get install -y \
     build-essential gettext cmake ninja-build git ccache python3-dev python3-pip locales \
@@ -42,5 +42,5 @@ RUN cd fontforge     && \
 
 # Add python module
 ENV PYTHONPATH=/usr/local/lib/python3/dist-packages/
-RUN pip install --upgrade --no-cache-dir 'pip>=24.0.0' &&\
-    pip install --no-cache-dir 'numpy>=1.26.4'
+RUN pip install --upgrade --no-cache-dir 'pip>=24.3.1' &&\
+    pip install --no-cache-dir --break-system-packages 'numpy>=2.1.3'
