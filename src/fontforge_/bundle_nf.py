@@ -48,32 +48,25 @@ class SourceInfo(SourceInfoRequiredKeys, SourceInfoOptionalKeys):
     pass
 
 
+# Ref: https://github.com/ryanoasis/nerd-fonts/wiki/Glyph-Sets-and-Code-Points
 SOURCES_INFO: Final[list[SourceInfo]] = [
     {   # Seti-UI + Custom
         "path": join(GLYPHS_PATH, "original-source.otf"),
-        "ranges": [(0xe5fa, 0xe6b5)],
-        "remaps": [(0xe4fa, 0xe5b5)],
+        "ranges": [(0xe5fa, 0xe6b7)],
+        "remaps": [(0xe4fa, 0xe5b7)],
         "scale": (0.83, 0.83),
         "translate": (-310, -140)
     },
     {   # Devicons (https://vorillaz.github.io/devicons/)
+        # TODO: 破壊的変更のため、全部確認する必要あり
         "path": join(GLYPHS_PATH, "devicons", "devicons.ttf"),
-        "ranges": [(0xe700, 0xe7c5)],
-        "remaps": [(0xe600, 0xe6c5)],
+        "ranges": [(0xe700, 0xe8ef)],
+        "remaps": [(0xe600, 0xe7ef)],
         "scale": (0.9, 0.9),
         "translate": (-405, -145),
-        "modify": """
-                0xe739 (0.9, 0.9) (0, 0) # 
-                0xe7bd (1, 1) (-570, 0)  # 
-                0xe7be (1, 1) (280, 0)   # 
-                0xe7bf (1, 1) (360, 0)   # 
-                0xe7c0 (1, 1) (-40, 0)   # 
-                0xe7c1 (1, 1) (-490, 0)  # 
-                0xe7c2 (1, 1) (-270, 0)  # 
-                0xe7c3 (1, 1) (290, 0)   # 
-                """
     },
     {   # Font Awesome (https://github.com/FortAwesome/Font-Awesome)
+        # TODO: ascent/descent 自体が変わっているので、生成物で比較する
         "path": join(GLYPHS_PATH, "font-awesome", "FontAwesome.otf"),
         "ranges": [(0xed00, 0xefc1), (0xf000, 0xf2ff)],
         "remaps": [None, None],
@@ -144,6 +137,7 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
                 """
     },
     {   # Powerline Extra Symbols (https://github.com/ryanoasis/powerline-extra-symbols)
+        # TODO: 隣との繋がりがよくなるような調整なので問題なさそうがだ、生成後を確認すること
         "path": join(GLYPHS_PATH, "powerline-extra", "PowerlineExtraSymbols.otf"),
         "ranges": [(0xe0a3,), (0xe0b4, 0xe0c8), (0xe0ca,), (0xe0cc, 0xe0d4), (0xe0d6, 0xe0d7)],
         "remaps": [None, None, None, None, None],
@@ -175,7 +169,7 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
     },
     {   # Font Logos (https://github.com/Lukas-W/font-logos)
         "path": join(GLYPHS_PATH, "font-logos.ttf"),
-        "ranges": [(0xf300, 0xf375)],
+        "ranges": [(0xf300, 0xf381)],
         "remaps": [None],
         "scale": (0.73, 0.73),
         "translate": (0, 150)
