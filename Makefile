@@ -18,8 +18,10 @@ FONTTOOLS_SCRIPT := src/fonttools_/main.py
 
 .PHONY: all
 all:
-	@docker-compose up fontforge
-	@docker-compose up fonttools
+	@# @docker-compose up fontforge
+	@# @docker-compose up fonttools
+	@make fontforge
+	@make fonttools
 
 .PHONY: release
 release:
