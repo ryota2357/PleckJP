@@ -6,6 +6,9 @@ GLYPHS_DIR := resources/glyphs
 
 ERROR_LOG_FILE := error.txt
 
+DOCKERFILE_FONTFORGE := src/fontforge.dockerfile
+DOCKERFILE_FONTTOOLS := src/fonttools.dockerfile
+
 MODIFY_HACK_SCRIPT := src/fontforge_/modify_hack.py
 MODIFY_IBMPLEX_SCRIPT := src/fontforge_/modify_ibm_plex_sans_jp.py
 MODIFY_HACK_NERD_SCRIPT := src/fontforge_/modify_hack_nerd.py
@@ -17,9 +20,9 @@ FONTTOOLS_SCRIPT := src/fonttools_/main.py
 
 
 .PHONY: all
-all:
-	@docker-compose up fontforge
-	@docker-compose up fonttools
+all: docker-compose-build
+	@docker compose up fontforge
+	@docker compose up fonttools
 
 .PHONY: release
 release:
@@ -39,6 +42,10 @@ release:
 clean:
 	@rm -f $(ERROR_LOG_FILE)
 	@rm -rf $(CACHE_DIR) $(BUILD_DIR)
+
+.PHONY: docker-compose-build
+docker-compose-build: $(DOCKERFILE_FONTFORGE) $(DOCKERFILE_FONTTOOLS)
+	@docker compose build
 
 .PHONY: fontforge
 fontforge: $(CACHE_DIR) $(addprefix $(CACHE_DIR)/PleckJP-, $(addsuffix .ttf, $(FONT_STYLES)))
