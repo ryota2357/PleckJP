@@ -35,7 +35,7 @@ release: $(BUILD_DIR)
 	@docker login
 	@echo "Current version is" $(shell python -c "import src.fontforge_.properties as p; print(p.VERSION, end='')")
 	@read -p "Type new version: " new_version && \
-		sed -i '' 's/^VERSION =.*/VERSION = "'$$new_version'"/' src/fontforge_/properties.py
+		sed -i 's/^VERSION =.*/VERSION = "'$$new_version'"/' src/fontforge_/properties.py
 	@make clean
 	@docker compose up --build release
 	@docker compose run --rm release bash -c "make -j$(nproc) with-fontforge && make -j$(nproc) with-fonttools"
@@ -43,7 +43,7 @@ release: $(BUILD_DIR)
 	@version=$$(python -c "import src.fontforge_.properties as p; print(p.VERSION, end='')") &&\
 		cd build &&\
 		zip -r PleckJP_v$$version.zip * &&\
-		shasum -a 256 PleckJP_v$$version.zip | awk '{print $$1}' > PleckJP_v$$version.sha256 &&\
+		sha256sum PleckJP_v$$version.zip | awk '{print $$1}' > PleckJP_v$$version.sha256 &&\
 		docker container commit pleckjp-release ryota2357/pleckjp:$$version &&\
 		docker push ryota2357/pleckjp:$$version
 	@rm build/LICENSE

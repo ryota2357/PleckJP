@@ -17,6 +17,10 @@
       {
         devShells.default = pkgs.mkShellNoCC {
           packages = with pkgs; [
+            python313
+            gnused
+            zip
+            coreutils
             nil
             pyright
           ];
