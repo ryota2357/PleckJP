@@ -40,13 +40,34 @@ brew install pleck-jp
 
 ## ビルド
 
-docker と docker-compose が必要です。
-
-次のコマンドでビルドを行います。
+docker がインストールされている環境で次のコマンドでビルドを行います。
 
 ```sh
 make
 ```
+
+ビルドが完了すると `build/` ディレクトリに ttf ファイルが生成されます。
+
+<details>
+<summary>リリースの方法</summary>
+
+docker に加えて、python, sed (GNU sed), zip, sha256sum などが必要です。
+
+推奨する環境の構築方法は docker と nix をインストールし、`nix develop` でシェルを起動する方法です。
+nix-direnv を利用すると、ディレクトリに入るだけで自動的に環境が構築されます (`direnv allow` が必要)。
+
+また、[Docker Hub の ryota2357/pleck-jp](https://hub.docker.com/repository/docker/ryota2357/pleckjp/general) に release イメージを公開する処理も含まれています。
+不要な場合は適宜 `Makefile` を修正してください。
+
+次のコマンドでリリースビルドを行います。
+
+```sh
+make release
+```
+
+ビルドが完了すると `build/` ディレクトリに .ttf, .zip, .sha256 ファイルが生成されます。
+
+</details>
 
 ## ライセンス
 
