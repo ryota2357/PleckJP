@@ -1,19 +1,24 @@
 services:
-    fontforge:
-        build:
-            context: .
-            dockerfile: ./src/fontforge.dockerfile
-        volumes:
-            - .:/home/pleckjp-fontforge
-        working_dir: /home/pleckjp-fontforge
-        container_name: pleckjp-fontforge
-        command: make -j4 fontforge
-    fonttools:
-        build:
-            context: .
-            dockerfile: ./src/fonttools.dockerfile
-        volumes:
-            - .:/home/pleckjp-fonttools
-        working_dir: /home/pleckjp-fonttools
-        container_name: pleckjp-fonttools
-        command: make -j4 fonttools
+  develop:
+    build:
+      context: .
+      target: develop
+      dockerfile: ./src/Dockerfile
+    volumes:
+      - .:/home/pleckjp
+    working_dir: /home/pleckjp
+    container_name: pleckjp-develop
+    command:
+      - /bin/bash
+      - -c
+      - |
+        make -j$(nproc) with-fontforge
+        make -j$(nproc) with-fontforge
+  release:
+    build:
+      context: .
+      target: release
+      dockerfile: ./src/Dockerfile
+    volumes:
+      - ./build:/home/pleckjp/build
+    container_name: pleckjp-release

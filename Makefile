@@ -6,8 +6,7 @@ GLYPHS_DIR := resources/glyphs
 
 ERROR_LOG_FILE := error.txt
 
-DOCKERFILE_FONTFORGE := src/fontforge.dockerfile
-DOCKERFILE_FONTTOOLS := src/fonttools.dockerfile
+DOCKERFILE := src/Dockerfile
 
 MODIFY_HACK_SCRIPT := src/fontforge_/modify_hack.py
 MODIFY_IBMPLEX_SCRIPT := src/fontforge_/modify_ibm_plex_sans_jp.py
@@ -20,17 +19,24 @@ FONTTOOLS_SCRIPT := src/fonttools_/main.py
 
 
 .PHONY: all
-all: docker-compose-build
-	@docker compose up fontforge
-	@docker compose up fonttools
+all:
+	@if [ -e /.pleckjp-docker-inside ]; then \
+		echo "Running inside Docker container"; \
+		echo "Please run:"; \
+		echo "  make with-fontforge"; \
+		echo "  make with-fonttools"; \
+	else \
+		docker compose up develop; \
+	fi
 
 .PHONY: release
-release:
+release: $(BUILD_DIR)
 	@echo "Current version is" $(shell python -c "import src.fontforge_.properties as p; print(p.VERSION, end='')")
 	@read -p "Type new version: " new_version && \
 		sed -i '' 's/^VERSION =.*/VERSION = "'$$new_version'"/' src/fontforge_/properties.py
 	@make clean
-	@make
+	@docker compose up --build release
+	@docker compose run --rm release bash -c "make -j$(nproc) with-fontforge && make -j$(nproc) with-fonttools"
 	@cp LICENSE build/
 	@version=$$(python -c "import src.fontforge_.properties as p; print(p.VERSION, end='')") && \
 		cd build && \
@@ -40,19 +46,19 @@ release:
 
 .PHONY: clean
 clean:
-	@rm -f $(ERROR_LOG_FILE)
-	@rm -rf $(CACHE_DIR) $(BUILD_DIR)
+	rm -f $(ERROR_LOG_FILE)
+	rm -rf $(CACHE_DIR) $(BUILD_DIR)
+	@if [ ! -e /.pleckjp-docker-inside ]; then \
+		echo "docker compose down"; \
+		docker compose down; \
+	fi
 
-.PHONY: docker-compose-build
-docker-compose-build: $(DOCKERFILE_FONTFORGE) $(DOCKERFILE_FONTTOOLS)
-	@docker compose build
-
-.PHONY: fontforge
-fontforge: $(CACHE_DIR) $(addprefix $(CACHE_DIR)/PleckJP-, $(addsuffix .ttf, $(FONT_STYLES)))
+.PHONY: with-fontforge
+with-fontforge: $(CACHE_DIR) $(addprefix $(CACHE_DIR)/PleckJP-, $(addsuffix .ttf, $(FONT_STYLES)))
 	@echo "Completed: fontforge"
 
-.PHONY: fonttools
-fonttools: $(BUILD_DIR) $(addprefix $(BUILD_DIR)/PleckJP-, $(addsuffix .ttf, $(FONT_STYLES)))
+.PHONY: with-fonttools
+with-fonttools: $(BUILD_DIR) $(addprefix $(BUILD_DIR)/PleckJP-, $(addsuffix .ttf, $(FONT_STYLES)))
 	@echo "Completed: fonttools"
 
 # Do not renove intermediate TTF files
