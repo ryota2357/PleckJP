@@ -31,6 +31,8 @@ all:
 
 .PHONY: release
 release: $(BUILD_DIR)
+	@echo "First, you need to login to Docker Hub"
+	@docker login
 	@echo "Current version is" $(shell python -c "import src.fontforge_.properties as p; print(p.VERSION, end='')")
 	@read -p "Type new version: " new_version && \
 		sed -i '' 's/^VERSION =.*/VERSION = "'$$new_version'"/' src/fontforge_/properties.py
@@ -38,10 +40,12 @@ release: $(BUILD_DIR)
 	@docker compose up --build release
 	@docker compose run --rm release bash -c "make -j$(nproc) with-fontforge && make -j$(nproc) with-fonttools"
 	@cp LICENSE build/
-	@version=$$(python -c "import src.fontforge_.properties as p; print(p.VERSION, end='')") && \
-		cd build && \
-		zip -r PleckJP_v$$version.zip * && \
-		shasum -a 256 PleckJP_v$$version.zip | awk '{print $$1}' > PleckJP_v$$version.sha256
+	@version=$$(python -c "import src.fontforge_.properties as p; print(p.VERSION, end='')") &&\
+		cd build &&\
+		zip -r PleckJP_v$$version.zip * &&\
+		shasum -a 256 PleckJP_v$$version.zip | awk '{print $$1}' > PleckJP_v$$version.sha256 &&\
+		docker container commit pleckjp-release ryota2357/pleckjp:$$version &&\
+		docker push ryota2357/pleckjp:$$version
 	@rm build/LICENSE
 
 .PHONY: clean
