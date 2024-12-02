@@ -47,6 +47,7 @@ make
 ```
 
 ビルドが完了すると `build/` ディレクトリに ttf ファイルが生成されます。
+より詳しくは [HowToBild.md](./HowToBuild.md) を確認してください。
 
 <details>
 <summary>リリースの方法</summary>
