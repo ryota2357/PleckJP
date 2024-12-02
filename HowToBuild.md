@@ -83,7 +83,7 @@ PleckJP-*.ttf にはメタ情報としてビルド日時などが含まれてい
 
 ます、FontForge で PleckJP-Regure-GH.ttf 画面左に、PleckJP-Regure.ttf 画面右に開きます。
 
-![スクリーンショット1](./images/how-to-buid/open-ttf.png)
+![スクリーンショット1](./images/how-to-build/open-ttf.png)
 
 次に、右側の FontForgeアプリケーションにて、「> > フォントの比較」を行います。
 
