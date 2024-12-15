@@ -2,12 +2,17 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs =
     {
       self,
       nixpkgs,
       flake-utils,
+      treefmt-nix,
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
@@ -25,7 +30,20 @@
             pyright
           ];
         };
-        formatter = pkgs.nixfmt-rfc-style;
+        formatter = treefmt-nix.lib.mkWrapper pkgs {
+          projectRootFile = "flake.nix";
+          programs = {
+            black.enable = true;
+            nixfmt.enable = true;
+            yamlfmt.enable = true;
+          };
+          settings.global.excludes = [
+            ".envrc"
+            "images/*"
+            "build/*"
+            "resources/*"
+          ];
+        };
       }
     );
 }
