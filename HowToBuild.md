@@ -75,7 +75,7 @@ PleckJP-Bold.ttf        PleckJP-BoldItalic.ttf  PleckJP-Italic.ttf      PleckJP-
 
 ビルドされたものが GitHub のリリースページに上がっているのものと同じ内容か確認します。
 
-なお、PleckJP-*.ttf にはメタ情報としてビルド日時が含まれているため、GitHub のリリースにあるものと完全に同じものにはなりません。
+なお、PleckJP-\*.ttf にはメタ情報としてビルド日時が含まれているため、GitHub のリリースにあるものと完全に同じものにはなりません。
 ここでは、FontForge のフォントを比較する機能を使用して、差分を確認してみます。
 なんからの方法で FontForge の GUI アプリケーションを入手しておいてください。
 
