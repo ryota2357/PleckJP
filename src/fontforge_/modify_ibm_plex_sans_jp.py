@@ -18,12 +18,14 @@ def main() -> None:
 
     # Remove kerning info
     for lookup in font.gpos_lookups:
-        if lookup.startswith("'halt'") or \
-           lookup.startswith("'vhal'") or \
-           lookup.startswith("'palt'") or \
-           lookup.startswith("'vpal'") or \
-           lookup.startswith("'kern'") or \
-           lookup.startswith("'vkrn'"):
+        if (
+            lookup.startswith("'halt'")
+            or lookup.startswith("'vhal'")
+            or lookup.startswith("'palt'")
+            or lookup.startswith("'vpal'")
+            or lookup.startswith("'kern'")
+            or lookup.startswith("'vkrn'")
+        ):
             font.removeLookup(lookup)
 
     # Remove vertical fonts
@@ -37,16 +39,16 @@ def main() -> None:
             util.font_clear_glyph(font, name)
 
     # Use Hack glyph
-    util.font_clear_glyph(font, 0x20, 0x2002)    # number, alphabet, etc
+    util.font_clear_glyph(font, 0x20, 0x2002)  # number, alphabet, etc
     util.font_clear_glyph(font, 0x2004, 0x2044)  # ← skipping 0x2003 (EM SPACE)
-    util.font_clear_glyph(font, 0x20ac)          # €
-    util.font_clear_glyph(font, 0x2190, 0x21f5)  # arrow
+    util.font_clear_glyph(font, 0x20AC)  # €
+    util.font_clear_glyph(font, 0x2190, 0x21F5)  # arrow
     util.font_clear_glyph(font, 0x2200, 0x22A5)  # math symbol
-    util.font_clear_glyph(font, 0x2116)          # №
-    util.font_clear_glyph(font, 0x2122)          # ™
-    util.font_clear_glyph(font, 0x23a7, 0x23ad)  # curly bracket
+    util.font_clear_glyph(font, 0x2116)  # №
+    util.font_clear_glyph(font, 0x2122)  # ™
+    util.font_clear_glyph(font, 0x23A7, 0x23AD)  # curly bracket
     util.font_clear_glyph(font, 0x2500, 0x2595)  # border symbol
-    util.font_clear_glyph(font, 0x25a0, 0x25ef)  # block symbol
+    util.font_clear_glyph(font, 0x25A0, 0x25EF)  # block symbol
 
     util.font_set_em(font, const.ASCENT, const.DESCENT, const.EM)
 
@@ -55,8 +57,8 @@ def main() -> None:
     util.glyph_riseze_width(font[0x2109], const.EM // 2)  # ℉
     util.glyph_riseze_width(font[0x2121], const.EM // 2)  # ℡
     util.glyph_riseze_width(font[0x212B], const.EM // 2)  # Å
-    util.glyph_riseze_width(font[0xfb01], const.EM // 2)  # ﬁ
-    util.glyph_riseze_width(font[0xfb02], const.EM // 2)  # ﬂ
+    util.glyph_riseze_width(font[0xFB01], const.EM // 2)  # ﬁ
+    util.glyph_riseze_width(font[0xFB02], const.EM // 2)  # ﬂ
 
     # Fix width (Note that I don't know the meaning of the following glyphs)
     # unkown scale: 1257 name: section
@@ -75,10 +77,23 @@ def main() -> None:
     # unkown scale: 1142 name: g.alt02
     # unkown scale: 1290 name: zero.alt01
     # unkown scale: 1228 name: minus
-    for name in ("section", "dagger.prop", "daggerdbl.prop", "paragraph",
-                 "degree", "plusminus", "multiply",
-                 "divide", "zero.zero", "uni51F0", "a.alt01", "g.alt01",
-                 "g.alt02", "zero.alt01", "minus"):
+    for name in (
+        "section",
+        "dagger.prop",
+        "daggerdbl.prop",
+        "paragraph",
+        "degree",
+        "plusminus",
+        "multiply",
+        "divide",
+        "zero.zero",
+        "uni51F0",
+        "a.alt01",
+        "g.alt01",
+        "g.alt02",
+        "zero.alt01",
+        "minus",
+    ):
         util.glyph_riseze_width(font[name], const.EM // 2)
     for name in ("perthousand.full", "uni51F0"):
         util.glyph_riseze_width(font[name], const.EM)
@@ -117,23 +132,38 @@ def modify_whitespace(font) -> None:
     pen = font[0x3000].glyphPen(replace=False)
 
     # draw square frame
-    util.draw_square(pen,
-                     (const.EM // 2, (const.EM - const.DESCENT) // 2),
-                     round(const.EM * 0.8), round(const.EM * 0.8))
-    util.draw_square(pen,
-                     (const.EM // 2, (const.EM - const.DESCENT) // 2),
-                     round(const.EM * 0.7), round(const.EM * 0.7),
-                     clockwise=False)
+    util.draw_square(
+        pen,
+        (const.EM // 2, (const.EM - const.DESCENT) // 2),
+        round(const.EM * 0.8),
+        round(const.EM * 0.8),
+    )
+    util.draw_square(
+        pen,
+        (const.EM // 2, (const.EM - const.DESCENT) // 2),
+        round(const.EM * 0.7),
+        round(const.EM * 0.7),
+        clockwise=False,
+    )
 
-    util.draw_square(pen,
-                     (const.EM // 2, (const.EM - const.DESCENT) // 2),
-                     round(const.EM * 0.35), round(const.EM * 2))
-    util.draw_square(pen,
-                     (0, (const.EM - const.DESCENT) // 2),
-                     round(const.EM * 0.5), round(const.EM * 0.35))
-    util.draw_square(pen,
-                     (const.EM, (const.EM - const.DESCENT) // 2),
-                     round(const.EM * 0.5), round(const.EM * 0.35))
+    util.draw_square(
+        pen,
+        (const.EM // 2, (const.EM - const.DESCENT) // 2),
+        round(const.EM * 0.35),
+        round(const.EM * 2),
+    )
+    util.draw_square(
+        pen,
+        (0, (const.EM - const.DESCENT) // 2),
+        round(const.EM * 0.5),
+        round(const.EM * 0.35),
+    )
+    util.draw_square(
+        pen,
+        (const.EM, (const.EM - const.DESCENT) // 2),
+        round(const.EM * 0.5),
+        round(const.EM * 0.35),
+    )
     pen = None
 
     font.selection.select(0x3000)

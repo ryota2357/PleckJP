@@ -11,8 +11,12 @@ from datetime import datetime
 if len(sys.argv) != 5:
     raise ValueError("Invalid argument")
 
-def is_font_style(style: str) -> TypeGuard[Literal["Regular", "Bold", "Italic", "BoldItalic"]]:
+
+def is_font_style(
+    style: str,
+) -> TypeGuard[Literal["Regular", "Bold", "Italic", "BoldItalic"]]:
     return style in ["Regular", "Bold", "Italic", "BoldItalic"]
+
 
 FONT_EN_TTF = sys.argv[1]
 FONT_JP_TTF = sys.argv[2]
@@ -78,16 +82,16 @@ def make_italic(font) -> None:
         else:
             font.selection.select(("more", "ranges", "encoding"), start, end)
 
-    selectMore(0x21, 0x217f)
-    selectMore(0x2460, 0x24ea)
-    selectMore(0x2768, 0x277e)
-    selectMore(0x27e6, 0x27eb)
+    selectMore(0x21, 0x217F)
+    selectMore(0x2460, 0x24EA)
+    selectMore(0x2768, 0x277E)
+    selectMore(0x27E6, 0x27EB)
     selectMore(0x2987, 0x2998)
-    selectMore(0x2e18)
-    selectMore(0x2e22, 0x2e2e)
-    selectMore(0x2e8e, 0xffe5)
-    selectMore(0x1f100)
-    selectMore(0x20b9f, 0x2f920)
+    selectMore(0x2E18)
+    selectMore(0x2E22, 0x2E2E)
+    selectMore(0x2E8E, 0xFFE5)
+    selectMore(0x1F100)
+    selectMore(0x20B9F, 0x2F920)
     # NOTE: After 0x110000, codepoint is defferent in Reguler and Bold.
     selectMore(".notdef", "uni301F.half")
     selectMore("acute.half", "zero.alt01")
@@ -112,7 +116,7 @@ def new_font():
     font.appendSFNTName(
         "English (US)",
         "SubFamily",
-        "".join([" " + c if c.isupper() else c for c in FONT_STYLE]).lstrip()
+        "".join([" " + c if c.isupper() else c for c in FONT_STYLE]).lstrip(),
     )
     font.appendSFNTName(
         "English (US)",
@@ -129,8 +133,7 @@ def new_font():
 
     font.gasp_version = 1
     font.gasp = (
-        (65535,
-         ('gridfit', 'antialias', 'symmetric-smoothing', 'gridfit+smoothing')),
+        (65535, ("gridfit", "antialias", "symmetric-smoothing", "gridfit+smoothing")),
     )
 
     font.weight = style_prop["weight"]
@@ -139,16 +142,16 @@ def new_font():
     font.os2_stylemap = style_prop["os2_stylemap"]
     font.os2_vendor = "2357"  # Me
     font.os2_panose = (  # https://monotype.github.io/panose/pan1.htm
-        2,                            # Family Kind = 2-Latin: Text and Display
-        11,                           # Serif Style = Nomal Sans
+        2,  # Family Kind = 2-Latin: Text and Display
+        11,  # Serif Style = Nomal Sans
         style_prop["panose_weight"],  # Weight
-        9,                            # Proportion = 9-Monospaced
-        3,                            # Contrast = 3-Very Low
-        2,                            # Stroke Variation = 2-No Variation
-        2,                            # Arm Style = 2-Straight Arms/Horizontal
-        style_prop['panose_letterform'],  # Letterform
-        2,                            # Midline = 2-Standard/Trimmed
-        4,                            # X-height = 4-Constant/Large
+        9,  # Proportion = 9-Monospaced
+        3,  # Contrast = 3-Very Low
+        2,  # Stroke Variation = 2-No Variation
+        2,  # Arm Style = 2-Straight Arms/Horizontal
+        style_prop["panose_letterform"],  # Letterform
+        2,  # Midline = 2-Standard/Trimmed
+        4,  # X-height = 4-Constant/Large
     )
 
     # typoascent, typodescent is generic version for above.

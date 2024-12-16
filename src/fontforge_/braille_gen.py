@@ -22,10 +22,10 @@ def main() -> None:
 
     with open(BRAILLE_JSON_PATH, "r") as f:
         braille_json = json.load(f)
-    table = braille_json['table']
-    for data in braille_json['data']:
-        code = int(data['code'], 16)
-        points = [table[str(p)] for p in data['points']]
+    table = braille_json["table"]
+    for data in braille_json["data"]:
+        code = int(data["code"], 16)
+        points = [table[str(p)] for p in data["points"]]
         create_braille(font, code, points)
 
     util.font_into_file(font, BUILD_FILE)
@@ -47,7 +47,9 @@ def draw_circle(pen, center_pos: NDArray, radius: int) -> None:
     def vector_from_rad(rad: float) -> NDArray:
         return np.array([cos(rad), sin(rad)])
 
-    def intersection(normal_vec1: NDArray, pos1: NDArray, normal_vec2: NDArray, pos2: NDArray) -> tuple[int, int]:
+    def intersection(
+        normal_vec1: NDArray, pos1: NDArray, normal_vec2: NDArray, pos2: NDArray
+    ) -> tuple[int, int]:
         # a(x - x1) + b(y - y1) = 0 <=> ax + by = ax1 + by1
         # c(x - x2) + d(y - y2) = 0 <=> cx + by = cx2 + by2
         #  ∴ A X = K
@@ -56,14 +58,8 @@ def draw_circle(pen, center_pos: NDArray, radius: int) -> None:
         c, d = normal_vec2
         x1, y1 = pos1
         x2, y2 = pos2
-        mat_A = np.matrix([
-            [a, b],
-            [c, d]
-        ])
-        vec_K = np.array([
-            a * x1 + b * y1,
-            c * x2 + d * y2
-        ])
+        mat_A = np.matrix([[a, b], [c, d]])
+        vec_K = np.array([a * x1 + b * y1, c * x2 + d * y2])
         mat_X = mat_A.I @ vec_K
         return (round(mat_X[0, 0]), round(mat_X[0, 1]))
 

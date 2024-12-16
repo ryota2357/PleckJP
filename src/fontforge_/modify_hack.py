@@ -18,10 +18,10 @@ def main() -> None:
 
     # Use IBMPlexSansJP glyph
     util.font_clear_glyph(font, 0x2003)  # 　(EM SPACE)
-    util.font_clear_glyph(font, 0x266a)  # ♪
+    util.font_clear_glyph(font, 0x266A)  # ♪
 
     # Use Nerd Font glyph
-    util.font_clear_glyph(font, 0xe0a0, 0xe0b3)  # Private Use Area
+    util.font_clear_glyph(font, 0xE0A0, 0xE0B3)  # Private Use Area
 
     util.font_set_em(font, const.ASCENT, const.DESCENT, const.EM)
     util.font_resize_all_width(font, const.EM // 2)
@@ -52,6 +52,7 @@ def fix_subscript_numbers(font) -> None:
     def subs(code: int) -> str:
         hex_str = hex(code)[2:].upper().zfill(4)
         return "uni" + hex_str + ".subs"
+
     for i in range(10):
         cp(subs(0x30 + i), 0x2080 + i)
     font.selection.none()
@@ -59,9 +60,9 @@ def fix_subscript_numbers(font) -> None:
 
 def create_up_tack(font) -> None:
     # 0x22a5 ⊥ (UP TACK)
-    font.selection.select(0x22a4)  # ⊤
+    font.selection.select(0x22A4)  # ⊤
     font.copy()
-    font.selection.select(0x22a5)
+    font.selection.select(0x22A5)
     font.paste()
 
     rot_mat = psMat.rotate(3.1415926535)
@@ -75,13 +76,19 @@ def create_up_tack(font) -> None:
 def modify_0(font) -> None:
     # Cover outer of 「0」
     pen = font[0x30].glyphPen(replace=False)
-    util.draw_square(pen,
-                     (const.EM // 4, round(const.EM * 0.3)),
-                     round(const.EM * 0.45), round(const.EM * 0.67))
-    util.draw_square(pen,
-                     (const.EM // 4, round(const.EM * 0.3)),
-                     round(const.EM * 0.10), round(const.EM * 0.32),
-                     clockwise=False)
+    util.draw_square(
+        pen,
+        (const.EM // 4, round(const.EM * 0.3)),
+        round(const.EM * 0.45),
+        round(const.EM * 0.67),
+    )
+    util.draw_square(
+        pen,
+        (const.EM // 4, round(const.EM * 0.3)),
+        round(const.EM * 0.10),
+        round(const.EM * 0.32),
+        clockwise=False,
+    )
     pen = None
 
     # Remove inner ellipse
@@ -90,7 +97,7 @@ def modify_0(font) -> None:
     font.selection.none()
 
     # Bring U+00B7 to center of 「0」
-    font.selection.select(0xb7)  # ·
+    font.selection.select(0xB7)  # ·
     font.copy()
     font.selection.select(0x30)
     font.pasteInto()
@@ -105,15 +112,16 @@ def modify_m(font) -> None:
     # Extract where to remove
     glyph = font[0x6D]
     pen = glyph.glyphPen(replace=False)
-    util.draw_square(pen,
-                     (const.EM // 4, round(const.EM * 0.05)),
-                     round(const.EM * 0.15), round(const.EM * 0.13))
+    util.draw_square(
+        pen,
+        (const.EM // 4, round(const.EM * 0.05)),
+        round(const.EM * 0.15),
+        round(const.EM * 0.13),
+    )
     font.intersect()
 
     # Create a cover that has a hole
-    util.draw_square(pen,
-                     (const.EM // 4, const.EM // 4),
-                     const.EM, const.EM)
+    util.draw_square(pen, (const.EM // 4, const.EM // 4), const.EM, const.EM)
     pen = None
     font.correctDirection()
 

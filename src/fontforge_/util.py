@@ -53,7 +53,9 @@ def glyph_riseze_width(glyph, new_width: int) -> None:
     glyph.width = new_width
 
 
-def draw_square(glyphPen, center: tuple[int, int], width: int, height: int, clockwise: bool = True) -> None:
+def draw_square(
+    glyphPen, center: tuple[int, int], width: int, height: int, clockwise: bool = True
+) -> None:
     dx = round(width / 2)
     dy = round(height / 2)
     center = (round(center[0]), round(center[1]))

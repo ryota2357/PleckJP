@@ -16,6 +16,7 @@ if len(sys.argv) != 3:
 GLYPHS_PATH = sys.argv[1]
 BUILD_FILE = sys.argv[2]
 
+
 #  {
 #      path: string
 #          Path to the ttf/otf files.
@@ -50,23 +51,23 @@ class SourceInfo(SourceInfoRequiredKeys, SourceInfoOptionalKeys):
 
 # Ref: https://github.com/ryanoasis/nerd-fonts/wiki/Glyph-Sets-and-Code-Points
 SOURCES_INFO: Final[list[SourceInfo]] = [
-    {   # Seti-UI + Custom
+    {  # Seti-UI + Custom
         "path": join(GLYPHS_PATH, "original-source.otf"),
-        "ranges": [(0xe5fa, 0xe6b7)],
-        "remaps": [(0xe4fa, 0xe5b7)],
+        "ranges": [(0xE5FA, 0xE6B7)],
+        "remaps": [(0xE4FA, 0xE5B7)],
         "scale": (0.83, 0.83),
-        "translate": (-310, -140)
+        "translate": (-310, -140),
     },
-    {   # Devicons (https://vorillaz.github.io/devicons/)
+    {  # Devicons (https://vorillaz.github.io/devicons/)
         "path": join(GLYPHS_PATH, "devicons", "devicons.ttf"),
-        "ranges": [(0xe700, 0xe8ef)],
-        "remaps": [(0xe600, 0xe7ef)],
+        "ranges": [(0xE700, 0xE8EF)],
+        "remaps": [(0xE600, 0xE7EF)],
         "scale": (0.9, 0.9),
         "translate": (-405, -145),
     },
-    {   # Font Awesome (https://github.com/FortAwesome/Font-Awesome)
+    {  # Font Awesome (https://github.com/FortAwesome/Font-Awesome)
         "path": join(GLYPHS_PATH, "font-awesome", "FontAwesome.otf"),
-        "ranges": [(0xed00, 0xefc1), (0xf000, 0xf2ff)],
+        "ranges": [(0xED00, 0xEFC1), (0xF000, 0xF2FF)],
         "remaps": [None, None],
         "scale": (0.8, 0.8),
         "translate": (-100, 160),
@@ -79,26 +80,26 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
                 0xf276           (1, 1) (115, 0)  # 
                 0xf294           (1, 1) (115, 0)  # 
                 [0xf2c7, 0xf2cb] (1, 1) (135, 0)  #  ~ 
-                """
+                """,
     },
-    {   # Font Awesome Extension (https://github.com/AndreLZGava/font-awesome-extension)
+    {  # Font Awesome Extension (https://github.com/AndreLZGava/font-awesome-extension)
         "path": join(GLYPHS_PATH, "font-awesome-extension.ttf"),
-        "ranges": [(0xe200, 0xe2a9)],
-        "remaps": [(0xe000, 0xe0a9)],
+        "ranges": [(0xE200, 0xE2A9)],
+        "remaps": [(0xE000, 0xE0A9)],
         "scale": (0.8, 0.8),
-        "translate": (-310, -80)
+        "translate": (-310, -80),
     },
-    {   # Material Design Icons (https://github.com/Templarian/MaterialDesign)
+    {  # Material Design Icons (https://github.com/Templarian/MaterialDesign)
         "path": join(GLYPHS_PATH, "materialdesign", "MaterialDesignIconsDesktop.ttf"),
-        "ranges": [(0xf0001, 0xf1af0)],
+        "ranges": [(0xF0001, 0xF1AF0)],
         "remaps": [None],
         "scale": (0.9, 0.9),
-        "translate": (-410, 0)
+        "translate": (-410, 0),
     },
-    {   # Weather (https://github.com/erikflowers/weather-icons)
+    {  # Weather (https://github.com/erikflowers/weather-icons)
         "path": join(GLYPHS_PATH, "weather-icons", "weathericons-regular-webfont.ttf"),
-        "ranges": [(0xe300, 0xe3e3)],
-        "remaps": [(0xf000, 0xf0eb)],
+        "ranges": [(0xE300, 0xE3E3)],
+        "remaps": [(0xF000, 0xF0EB)],
         "scale": (0.9, 0.9),
         "translate": (0, 0),
         "modify": """
@@ -110,21 +111,21 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
                 0xe350           (0.9, 0.9) (75, -110)  # 
                 [0xe35e, 0xe367] (0.9, 0.9) (0, 0)      #  ~ 
                 [0xe3aa, 0xe3ad] (0.8, 0.8) (0, 0)      #  ~ 
-                """
+                """,
     },
-    {   # Octicons (https://github.com/primer/octicons)
+    {  # Octicons (https://github.com/primer/octicons)
         "path": join(GLYPHS_PATH, "octicons", "octicons.ttf"),
-        "ranges": [(0xf400, 0xf532), (0x2665,), (0x26a1,)],
-        "remaps": [(0xf000, 0xf305), None, None],
+        "ranges": [(0xF400, 0xF532), (0x2665,), (0x26A1,)],
+        "remaps": [(0xF000, 0xF305), None, None],
         "scale": (0.695, 0.695),
         "translate": (-200, 230),
         "modify": """
                 0xf480 (1, 1) (0, -250)  # 
-                """
+                """,
     },
-    {   # Powerline Symbols
+    {  # Powerline Symbols
         "path": join(GLYPHS_PATH, "powerline-symbols", "PowerlineSymbols.otf"),
-        "ranges": [(0xe0a0, 0xe0a2), (0xe0b0, 0xe0b3)],
+        "ranges": [(0xE0A0, 0xE0A2), (0xE0B0, 0xE0B3)],
         "remaps": [None, None],
         "scale": (0.97, 0.887),
         "translate": (0, -109),
@@ -132,11 +133,17 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
                 0xe0a0 (1, 1)     (-60, 0)  # 
                 0xe0b0 (1, 0.995) (-74, 10) # 
                 0xe0b2 (1, 0.995) (0, 10)   # 
-                """
+                """,
     },
-    {   # Powerline Extra Symbols (https://github.com/ryanoasis/powerline-extra-symbols)
+    {  # Powerline Extra Symbols (https://github.com/ryanoasis/powerline-extra-symbols)
         "path": join(GLYPHS_PATH, "powerline-extra", "PowerlineExtraSymbols.otf"),
-        "ranges": [(0xe0a3,), (0xe0b4, 0xe0c8), (0xe0ca,), (0xe0cc, 0xe0d4), (0xe0d6, 0xe0d7)],
+        "ranges": [
+            (0xE0A3,),
+            (0xE0B4, 0xE0C8),
+            (0xE0CA,),
+            (0xE0CC, 0xE0D4),
+            (0xE0D6, 0xE0D7),
+        ],
         "remaps": [None, None, None, None, None],
         "scale": (1, 1),
         "translate": (0, 0),
@@ -160,36 +167,36 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
                 0xe0d4           (0.82, 0.82)  (0, 0)      # 
                 0xe0d6           (0.767, 0.82) (-58, -4)   # 
                 0xe0d7           (0.767, 0.82) (0, -4)     # 
-                """
+                """,
     },
-    {   # IEC Power Symbols (https://unicodepowersymbol.com/)
+    {  # IEC Power Symbols (https://unicodepowersymbol.com/)
         "path": join(GLYPHS_PATH, "Unicode_IEC_symbol_font.otf"),
-        "ranges": [(0x23fb, 0x23fe), (0x2b58,)],
+        "ranges": [(0x23FB, 0x23FE), (0x2B58,)],
         "remaps": [None, None],
         "scale": (0.8, 0.8),
         "translate": (-280, -100),
     },
-    {   # Font Logos (https://github.com/Lukas-W/font-logos)
+    {  # Font Logos (https://github.com/Lukas-W/font-logos)
         "path": join(GLYPHS_PATH, "font-logos.ttf"),
-        "ranges": [(0xf300, 0xf381)],
+        "ranges": [(0xF300, 0xF381)],
         "remaps": [None],
         "scale": (0.73, 0.73),
-        "translate": (0, 150)
+        "translate": (0, 150),
     },
-    {   # Pomicons (https://github.com/gabrielelana/pomicons)
+    {  # Pomicons (https://github.com/gabrielelana/pomicons)
         "path": join(GLYPHS_PATH, "pomicons", "Pomicons.otf"),
-        "ranges": [(0xe000, 0xe00a)],
+        "ranges": [(0xE000, 0xE00A)],
         "remaps": [None],
         "scale": (0.87, 0.87),
         "translate": (-300, 0),
         "modify": """
                 0xe009 (1, 1) (330, 0)  # 
                 0xe00a (1, 1) (170, 0)  # 
-                """
+                """,
     },
-    {   # Codicons (https://github.com/microsoft/vscode-codicons)
+    {  # Codicons (https://github.com/microsoft/vscode-codicons)
         "path": join(GLYPHS_PATH, "codicons", "codicon.ttf"),
-        "ranges": [(0xea60, 0xec1e)],
+        "ranges": [(0xEA60, 0xEC1E)],
         "remaps": [None],
         "scale": (0.8, 0.8),
         "translate": (-350, -220),
@@ -197,8 +204,8 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
                 [0xea9d, 0xeaa0] (1, 1) (50, 0)  #  ~ 
                 [0xeaa6, 0xeaa9] (1, 1) (40, 0)  #  ~ 
                 0xeafc           (1, 1) (40, 0)  # 
-                """
-    }
+                """,
+    },
 ]
 
 
@@ -229,12 +236,12 @@ def main() -> None:
     util.log("Generated:", BUILD_FILE)
 
 
-def remap_range(font, from_range: tuple[int, int] | None, to_range: tuple[int, int]) -> None:
+def remap_range(
+    font, from_range: tuple[int, int] | None, to_range: tuple[int, int]
+) -> None:
     if from_range is None:
         return
-    next_to_codepoint, next_from_codepoint = _remap_util(
-        font, from_range, to_range
-    )
+    next_to_codepoint, next_from_codepoint = _remap_util(font, from_range, to_range)
 
     to_codepoint = next_to_codepoint()
     from_codepoint = next_from_codepoint()
@@ -257,7 +264,9 @@ def remap_range(font, from_range: tuple[int, int] | None, to_range: tuple[int, i
         raise ValueError("Invalid range or remap (remap is smaller than range)")
 
 
-def _remap_util(font, from_range: tuple[int, int], to_range: tuple[int, int]) -> tuple[Callable[[], int | None], Callable[[], int | None]]:
+def _remap_util(
+    font, from_range: tuple[int, int], to_range: tuple[int, int]
+) -> tuple[Callable[[], int | None], Callable[[], int | None]]:
     fixed_from = _tuple_to_range(from_range or to_range)
     fixed_to = _tuple_to_range(to_range)
     remain_skip_count = len(fixed_from) - len(fixed_to)
@@ -265,6 +274,7 @@ def _remap_util(font, from_range: tuple[int, int], to_range: tuple[int, int]) ->
     to_iter = iter(fixed_to)
 
     if remain_skip_count > 0:
+
         def next_from_codepoint():
             nonlocal remain_skip_count, from_iter
             ret = next(from_iter, None)
@@ -277,13 +287,20 @@ def _remap_util(font, from_range: tuple[int, int], to_range: tuple[int, int]) ->
                     ret = next(from_iter, None)
                     continue
             return ret
+
     elif remain_skip_count == 0:
+
         def next_from_codepoint():
             return next(from_iter, None)
+
     else:
-        raise ValueError("from_range is smaller than to_range: ",
-                         "from_range:", len(fixed_from),
-                         "to_range:", len(fixed_to))
+        raise ValueError(
+            "from_range is smaller than to_range: ",
+            "from_range:",
+            len(fixed_from),
+            "to_range:",
+            len(fixed_to),
+        )
 
     def next_to_codepoint():
         return next(to_iter, None)
@@ -307,7 +324,7 @@ def transform_all(font, scale: tuple[float, float], translate: tuple[int, int]) 
 
 def modify(font, script: str) -> None:
     for line in script.split(sep="\n"):
-        line = line.strip().replace(" ", "").replace("(", ",(")  # )) <- nvim の自動インデントがおかしくなるので
+        line = line.strip().replace(" ", "").replace("(", ",(")
         if len(line) < 1 or line.startswith("#"):
             continue
         try:
