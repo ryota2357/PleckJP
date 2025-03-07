@@ -32,6 +32,11 @@ def font_resize_all_width(font, new_width: int) -> None:
     for glyph in font.glyphs():
         if glyph.width == new_width:
             continue
+        # NOTE: U+0000（NULL）is always width 0
+        # ref: https://typedrawers.com/discussion/5068/advance-widths-for-c0-control-glyphs
+        if glyph.unicode == 0:
+            glyph.width = 0
+            continue
         if glyph.width != 0:
             fix_scale_mat = psMat.scale(float(new_width) / glyph.width)
             glyph.transform(fix_scale_mat)
