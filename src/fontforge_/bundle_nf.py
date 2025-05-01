@@ -59,7 +59,7 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
         "translate": (-310, -140),
     },
     {  # Devicons (https://vorillaz.github.io/devicons/)
-        "path": join(GLYPHS_PATH, "devicons", "devicons.ttf"),
+        "path": join(GLYPHS_PATH, "devicons", "devicons.otf"),
         "ranges": [(0xE700, 0xE8EF)],
         "remaps": [(0xE600, 0xE7EF)],
         "scale": (0.9, 0.9),
@@ -114,7 +114,7 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
                 """,
     },
     {  # Octicons (https://github.com/primer/octicons)
-        "path": join(GLYPHS_PATH, "octicons", "octicons.ttf"),
+        "path": join(GLYPHS_PATH, "octicons", "octicons.otf"),
         "ranges": [(0xF400, 0xF532), (0x2665,), (0x26A1,)],
         "remaps": [(0xF000, 0xF305), None, None],
         "scale": (0.695, 0.695),
