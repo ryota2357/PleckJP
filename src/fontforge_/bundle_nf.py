@@ -1,5 +1,3 @@
-# pyright: reportMissingImports=false
-
 import sys
 import ast
 from os.path import join, basename, splitext

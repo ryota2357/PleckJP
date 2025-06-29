@@ -1,5 +1,3 @@
-# pyright: reportMissingImports=false
-
 import sys
 from typing import Literal, TypeGuard
 import fontforge

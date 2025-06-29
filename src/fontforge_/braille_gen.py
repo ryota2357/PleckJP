@@ -1,5 +1,3 @@
-# pyright: reportMissingImports=false
-
 import sys
 from os.path import join, dirname
 import json

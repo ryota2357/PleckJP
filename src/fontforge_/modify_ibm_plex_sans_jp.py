@@ -1,5 +1,3 @@
-# pyright: reportMissingImports=false
-
 import sys
 import fontforge
 import psMat
