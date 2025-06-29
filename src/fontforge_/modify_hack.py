@@ -39,21 +39,44 @@ def main() -> None:
 
 
 def fix_subscript_numbers(font) -> None:
-    def cp(from_: int | str, to: int | str):
+    def copy(from_: int | str, to: int | str):
         font.selection.select(from_)
         font.copy()
         font.selection.select(to)
         font.paste()
+        font.selection.none()
 
-    # NOTE: After 0x10000 Hack has different glyph.
-    #       So, you can't use the encoding number.
-    def subs(code: int) -> str:
+    def fix_lookup(target: int | str, replace_old: str, replace_new: str) -> None:
+        glyph = font[target]
+        pos_subs = glyph.getPosSub("*")
+        for pos_sub in pos_subs:
+            # pos_sub: (subtable_name, lookup_type, replacement1, replacement2, ...)
+            subtable = pos_sub[0]
+            replacements = pos_sub[2:]
+            if replace_old not in replacements:
+                continue
+            new_replacements = []
+            for replacement in replacements:
+                if replacement == replace_old:
+                    new_replacements.append(replace_new)
+                else:
+                    new_replacements.append(replacement)
+            glyph.removePosSub(subtable)
+            if len(new_replacements) == 1:
+                glyph.addPosSub(subtable, new_replacements[0])
+            else:
+                glyph.addPosSub(subtable, tuple(new_replacements))
+
+    def uni(code: int) -> str:
         hex_str = hex(code)[2:].upper().zfill(4)
-        return "uni" + hex_str + ".subs"
+        return "uni" + hex_str
 
     for i in range(10):
-        cp(subs(0x30 + i), 0x2080 + i)
-    font.selection.none()
+        base = uni(0x30 + i)
+        to = uni(0x2080 + i)
+        copy(base + ".subs", to)
+        fix_lookup(base, base + ".subs", to)
+        util.font_clear_glyph(font, base + ".subs")
 
 
 def create_up_tack(font) -> None:
