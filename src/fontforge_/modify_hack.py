@@ -29,6 +29,7 @@ def main() -> None:
     # 0x226b: ≫
     fix_subscript_numbers(font)
     create_up_tack(font)
+    create_inverted_ohm_sign(font)
 
     modify_0(font)
     modify_m(font)
@@ -85,12 +86,21 @@ def create_up_tack(font) -> None:
     font.copy()
     font.selection.select(0x22A5)
     font.paste()
-
     rot_mat = psMat.rotate(3.1415926535)
     move_mat = psMat.translate(const.EM // 2, 1065)
-    mat = psMat.compose(rot_mat, move_mat)
-    font.transform(mat, ("noWidth",))
+    font.transform(psMat.compose(rot_mat, move_mat), ("noWidth",))
+    font.selection.none()
 
+
+def create_inverted_ohm_sign(font) -> None:
+    # 0x2127 ℧ (INVERTED OHM SIGN)
+    font.selection.select(0x2126)  # Ω
+    font.copy()
+    font.selection.select(0x2127)
+    font.paste()
+    rot_mat = psMat.rotate(3.1415926535)
+    move_mat = psMat.translate(const.EM // 2, 1214)
+    font.transform(psMat.compose(rot_mat, move_mat), ("noWidth",))
     font.selection.none()
 
 
