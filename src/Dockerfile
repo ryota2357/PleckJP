@@ -4,10 +4,12 @@ RUN apt-get update     &&\
     apt-get upgrade -y &&\
     apt-get install -y \
       build-essential pkg-config gettext cmake ninja-build git locales \
+      libbrotli-dev    \
       libcairo2-dev    \
-      libfreetype6-dev \
+      libfreetype-dev  \
       libgif-dev       \
       libgtk-3-dev     \
+      libgtkmm-3.0-dev \
       libjpeg-dev      \
       libpango1.0-dev  \
       libpng-dev       \
@@ -16,7 +18,7 @@ RUN apt-get update     &&\
       libtiff5-dev     \
       libtool          \
       libwoff-dev      \
-      libxml2-dev  &&\
+      libxml2-dev    &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
 
