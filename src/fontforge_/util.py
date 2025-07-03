@@ -7,7 +7,7 @@ def font_into_file(font, filename: str) -> None:
     font.close()
 
 
-def font_clear_glyph(font, start: int, end: int | None = None) -> None:
+def font_clear_glyph(font, start: int | str, end: int | str | None = None) -> None:
     if end is None:
         font.selection.select(start)
     else:
