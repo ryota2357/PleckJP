@@ -17,7 +17,7 @@ class StylePropertyAll(TypedDict):
 
 
 FAMILY = "PleckJP"
-VERSION = "1.6.0"
+VERSION = "2.0.0"
 ENCODING = "UnicodeFull"
 
 COPYRIGHT = "\n".join(
