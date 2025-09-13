@@ -44,8 +44,8 @@ RUN git clone https://github.com/fontforge/fontforge --depth 1 &&\
     ninja clean
 
 # Add python module
-RUN pip install --upgrade --no-cache-dir 'pip>=25.1.1' &&\
-    pip install --no-cache-dir 'numpy>=2.3.1' 'fonttools>=4.58.4'
+RUN pip install --upgrade --no-cache-dir 'pip>=25.2.0' &&\
+    pip install --no-cache-dir 'numpy>=2.3.3' 'fonttools>=4.59.2'
 
 # To detect docker environment (ENV din't work, I don't know why)
 RUN touch /.pleckjp-docker-inside
