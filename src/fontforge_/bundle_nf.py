@@ -33,8 +33,8 @@ BUILD_FILE = sys.argv[2]
 #  }
 class SourceInfoRequiredKeys(TypedDict):
     path: str
-    ranges: list[tuple[int, ...]]
-    remaps: list[tuple[int, ...] | None]
+    ranges: list[tuple[int] | tuple[int, int]]
+    remaps: list[tuple[int] | tuple[int, int] | None]
     scale: tuple[float, float]
     translate: tuple[int, int]
 
@@ -218,7 +218,6 @@ def main() -> None:
         remaps = info["remaps"]
         if len(ranges) != len(remaps):
             raise ValueError("len(ranges):", len(ranges), "len(remaps):", len(remaps))
-
         for i in range(len(ranges)):
             remap_range(source, remaps[i], ranges[i])
         if "modify" in info:
@@ -235,7 +234,9 @@ def main() -> None:
 
 
 def remap_range(
-    font, from_range: tuple[int, int] | None, to_range: tuple[int, int]
+    font,
+    from_range: tuple[int] | tuple[int, int] | None,
+    to_range: tuple[int] | tuple[int, int]
 ) -> None:
     if from_range is None:
         return
@@ -263,7 +264,9 @@ def remap_range(
 
 
 def _remap_util(
-    font, from_range: tuple[int, int], to_range: tuple[int, int]
+    font,
+    from_range: tuple[int] | tuple[int, int],
+    to_range: tuple[int] |tuple[int, int]
 ) -> tuple[Callable[[], int | None], Callable[[], int | None]]:
     fixed_from = _tuple_to_range(from_range or to_range)
     fixed_to = _tuple_to_range(to_range)
@@ -357,7 +360,7 @@ def new_font():
     return font
 
 
-def copy_range(font, source, range_: tuple[int, int | None]) -> None:
+def copy_range(font, source, range_: tuple[int] | tuple[int, int]) -> None:
     range_iter = iter(_tuple_to_range(range_))
     codepoint = next(range_iter, None)
     while codepoint:
@@ -374,10 +377,12 @@ def copy_range(font, source, range_: tuple[int, int | None]) -> None:
         codepoint = next(range_iter, None)
 
 
-def _tuple_to_range(tuple_: tuple[int, int | None]) -> range:
-    fixed = (*tuple_, None)
-    start = fixed[0]
-    stop = (fixed[1] or fixed[0]) + 1
+def _tuple_to_range(tuple_: tuple[int] | tuple[int, int]) -> range:
+    start = tuple_[0]
+    if len(tuple_) == 1:
+        stop = start + 1
+    else:
+        stop = tuple_[1] + 1
     return range(start, stop)
 
 
