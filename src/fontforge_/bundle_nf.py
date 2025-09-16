@@ -116,7 +116,7 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
         "ranges": [(0xF400, 0xF532), (0x2665,), (0x26A1,)],
         "remaps": [(0xF000, 0xF305), None, None],
         "scale": (0.695, 0.695),
-        "translate": (-200, 230),
+        "translate": (-200, 170),
         "modify": """
                 0xf480 (1, 1) (0, -250)  # 
                 """,
