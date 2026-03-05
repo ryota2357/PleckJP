@@ -15,8 +15,9 @@ BUILD_FILE = sys.argv[3]
 def main() -> None:
     ttx_file_path = join(CACHE_DIR, f"{splitext(basename(FONT_FILE))[0]}.ttx")
 
-    xml = dump_ttx(ttx_file_path, "post")
+    xml = dump_ttx(ttx_file_path, "post", "OS/2")
     fix_post_table(xml)
+    fix_os2_table(xml)
     xml.write(
         ttx_file_path,
         encoding="utf-8",
@@ -35,11 +36,13 @@ def main() -> None:
     os.remove(ttx_file_path)
 
 
-def dump_ttx(ttx_file_path: str, table: str) -> ElementTree:
+def dump_ttx(ttx_file_path: str, *tables: str) -> ElementTree:
+    args = []
+    for table in tables:
+        args += ["-t", table]
     fontTools.ttx.main(
         [
-            "-t",
-            table,
+            *args,
             "-f",
             "-o",
             ttx_file_path,
@@ -55,6 +58,15 @@ def fix_post_table(xml: ElementTree) -> None:
     is_fixed_pitch = 1
     for elem in xml.iter("isFixedPitch"):
         elem.set("value", str(is_fixed_pitch))
+
+
+def fix_os2_table(xml: ElementTree) -> None:
+    # xAvgCharWidthをhalf-width(EM/2)に固定
+    # FontForgeの自動計算では全角グリフも含めた平均になり、 Windows Excel等で文字幅が大きくなる問題の原因となる
+    # タグ形式: <xAvgCharWidth value="1024"/>
+    half_width = 1024  # EM // 2, see ../fontforge_/properties.py
+    for elem in xml.iter("xAvgCharWidth"):
+        elem.set("value", str(half_width))
 
 
 if __name__ == "__main__":
