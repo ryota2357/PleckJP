@@ -1,7 +1,7 @@
 import sys
 import os
 from os.path import join, basename, splitext
-from xml.etree.ElementTree import ElementTree, parse as xml_parse
+from xml.etree.ElementTree import Element, ElementTree, parse as xml_parse
 import fontTools.ttx
 
 if len(sys.argv) != 4:
@@ -36,7 +36,7 @@ def main() -> None:
     os.remove(ttx_file_path)
 
 
-def dump_ttx(ttx_file_path: str, *tables: str) -> ElementTree:
+def dump_ttx(ttx_file_path: str, *tables: str) -> ElementTree[Element]:
     args = []
     for table in tables:
         args += ["-t", table]
