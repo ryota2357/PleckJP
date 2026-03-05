@@ -236,7 +236,7 @@ def main() -> None:
 def remap_range(
     font,
     from_range: tuple[int] | tuple[int, int] | None,
-    to_range: tuple[int] | tuple[int, int]
+    to_range: tuple[int] | tuple[int, int],
 ) -> None:
     if from_range is None:
         return
@@ -266,7 +266,7 @@ def remap_range(
 def _remap_util(
     font,
     from_range: tuple[int] | tuple[int, int],
-    to_range: tuple[int] |tuple[int, int]
+    to_range: tuple[int] | tuple[int, int],
 ) -> tuple[Callable[[], int | None], Callable[[], int | None]]:
     fixed_from = _tuple_to_range(from_range or to_range)
     fixed_to = _tuple_to_range(to_range)
