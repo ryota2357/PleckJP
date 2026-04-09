@@ -23,6 +23,19 @@ brew tap ryota2357/pleck-jp
 brew install pleck-jp
 ```
 
+Nix の場合は [NUR](https://nur.nix-community.org/) からインストールできます。
+
+```nix
+# flake input に追加
+inputs.nur = {
+  url = "github:nix-community/NUR";
+  inputs.nixpkgs.follows = "nixpkgs";
+};
+
+# packages から参照
+nur.repos.ryota2357.pleckjp-font
+```
+
 ## スクリーンショット
 
 ![code-cpp-rust](./images/code-cpp-rust.png)
