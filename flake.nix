@@ -22,7 +22,7 @@
       {
         devShells.default = pkgs.mkShellNoCC {
           packages = with pkgs; [
-            (python313.withPackages (p: [
+            (python314.withPackages (p: [
               p.fontforge
               p.fonttools
               p.numpy
