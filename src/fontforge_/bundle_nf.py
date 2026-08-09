@@ -51,21 +51,21 @@ class SourceInfo(SourceInfoRequiredKeys, SourceInfoOptionalKeys):
 SOURCES_INFO: Final[list[SourceInfo]] = [
     {  # Seti-UI + Custom
         "path": join(GLYPHS_PATH, "original-source.otf"),
-        "ranges": [(0xE5FA, 0xE6B7)],
-        "remaps": [(0xE4FA, 0xE5B7)],
+        "ranges": [(0xE5FA, 0xE6BB)],
+        "remaps": [(0xE4FA, 0xE5BB)],
         "scale": (0.83, 0.83),
         "translate": (-310, -140),
     },
     {  # Devicons (https://vorillaz.github.io/devicons/)
         "path": join(GLYPHS_PATH, "devicons", "devicons.otf"),
-        "ranges": [(0xE700, 0xE8EF)],
-        "remaps": [(0xE600, 0xE7EF)],
+        "ranges": [(0xE700, 0xE958)],
+        "remaps": [(0xE600, 0xE858)],
         "scale": (0.9, 0.9),
         "translate": (-405, -145),
     },
     {  # Font Awesome (https://github.com/FortAwesome/Font-Awesome)
         "path": join(GLYPHS_PATH, "font-awesome", "FontAwesome.otf"),
-        "ranges": [(0xED00, 0xEFC1), (0xF000, 0xF2FF)],
+        "ranges": [(0xED00, 0xEFCF), (0xF000, 0xF2FF)],
         "remaps": [None, None],
         "scale": (0.8, 0.8),
         "translate": (-100, 160),
@@ -176,7 +176,7 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
     },
     {  # Font Logos (https://github.com/Lukas-W/font-logos)
         "path": join(GLYPHS_PATH, "font-logos.ttf"),
-        "ranges": [(0xF300, 0xF381)],
+        "ranges": [(0xF300, 0xF385)],
         "remaps": [None],
         "scale": (0.73, 0.73),
         "translate": (0, 150),
@@ -194,7 +194,7 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
     },
     {  # Codicons (https://github.com/microsoft/vscode-codicons)
         "path": join(GLYPHS_PATH, "codicons", "codicon.ttf"),
-        "ranges": [(0xEA60, 0xEC1E)],
+        "ranges": [(0xEA60, 0xEC84)],
         "remaps": [None],
         "scale": (0.8, 0.8),
         "translate": (-350, -220),
