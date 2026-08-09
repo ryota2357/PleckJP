@@ -242,9 +242,24 @@ def remap_range(
         return
     next_to_codepoint, next_from_codepoint = _remap_util(font, from_range, to_range)
 
+    moves: list[tuple[int, int]] = []
     to_codepoint = next_to_codepoint()
     from_codepoint = next_from_codepoint()
     while to_codepoint and from_codepoint:
+        moves.append((from_codepoint, to_codepoint))
+        to_codepoint = next_to_codepoint()
+        from_codepoint = next_from_codepoint()
+
+    if to_codepoint:
+        raise ValueError("Invalid range or remap (range is smaller than remap)")
+    if from_codepoint:
+        raise ValueError("Invalid range or remap (remap is smaller than range)")
+
+    first_from, first_to = moves[0] if moves else (0, 0)
+    if first_to > first_from:
+        moves.reverse()
+
+    for from_codepoint, to_codepoint in moves:
         font.selection.select(from_codepoint)
         font.copy()
         font.selection.select(to_codepoint)
@@ -254,13 +269,6 @@ def remap_range(
         except TypeError as e:
             if str(e) != "No such glyph":
                 raise
-        to_codepoint = next_to_codepoint()
-        from_codepoint = next_from_codepoint()
-
-    if to_codepoint:
-        raise ValueError("Invalid range or remap (range is smaller than remap)")
-    if from_codepoint:
-        raise ValueError("Invalid range or remap (remap is smaller than range)")
 
 
 def _remap_util(
