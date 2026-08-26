@@ -113,8 +113,8 @@ SOURCES_INFO: Final[list[SourceInfo]] = [
     },
     {  # Octicons (https://github.com/primer/octicons)
         "path": join(GLYPHS_PATH, "octicons", "octicons.otf"),
-        "ranges": [(0xF400, 0xF532), (0x2665,), (0x26A1,)],
-        "remaps": [(0xF000, 0xF305), None, None],
+        "ranges": [(0xF400, 0xF533), (0x2665,), (0x26A1,)],
+        "remaps": [(0xF000, 0xF306), None, None],
         "scale": (0.695, 0.695),
         "translate": (-200, 170),
         "modify": """
