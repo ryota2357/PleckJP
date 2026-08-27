@@ -1,5 +1,12 @@
 # Release Notes
 
+## v2.2.1 (2026-08-27)
+
+- NerdFonts 由来のグリフ F533 (oct-bookmark_slash) が欠落していたのを修正しました。
+  - この欠落は v0.4.0 以降のすべてのバージョンにおいて発生していました。
+
+**Full Changelog**: [v2.2.0...v2.2.1](https://github.com/ryota2357/PleckJP/compare/v2.2.0...v2.2.1)
+
 ## v2.2.0 (2026-08-10)
 
 - 使用している NerdFonts を v3.5.0 に上げました。新規アイコンの追加や既存のグリフの改善などが含まれています。
