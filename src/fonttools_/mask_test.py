@@ -101,6 +101,26 @@ MASKED_CASES = [
     ("pypi-AgEIcHlwaS5vcmc", "pypi-•••••••••••••••"),
     ("oy2abcdefghijklmnop", "oy2••••••••••••••••"),
     ("cmVhbGx5LWxvbmctYmFzZTY0", "cmV•••••••••••••••••••••"),
+    # JFrog access token (base64 の `reftu:...`)。短いトークンでも cmVmdG で伏せる
+    ("cmVmdGtuOjAx", "cmVmdG••••••"),
+    (
+        "cmVmdGtuOjAxOjE3NjU0Njg1MjY6SlBoYWZ4",
+        "cmVmdG••••••••••••••••••••••••••••••",
+    ),
+    # base64 でエンコードされた PEM / OpenSSH 秘密鍵
+    (
+        "LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQ==",
+        "LS0tLS1CRUdJTi••••••••••••••••••••••••••••==",
+    ),
+    (
+        "b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQ",
+        "b3BlbnNzaC1rZXkt••••••••••••••••••••••••••",
+    ),
+    # 連想配列 / 辞書のキー代入 (`config["TOKEN"] = "..."`)
+    ('config["API_TOKEN"] = "7MMVuQhABCDEF"', 'config["API_TOKEN"] = "•••••••••••••"'),
+    ("config['API_TOKEN'] = '7MMVuQhABCDEF'", "config['API_TOKEN'] = '•••••••••••••'"),
+    ('cfg["SECRET"] = "abcdefgh"', 'cfg["SECRET"] = "••••••••"'),
+    ("cfg['SECRET'] = 'abcdefgh'", "cfg['SECRET'] = '••••••••'"),
     # Airtable / JWT (ドットをはさんでも継続する)
     ("patABCDEFGHIJKLMN.1234567890abcdef", "pat••••••••••••••.••••••••••••••••"),
     ("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIx", "eyJ•••••••••••••••••.••••••••••••"),
@@ -146,6 +166,11 @@ UNMASKED_CASES = [
     "patriarchal",
     "eyesight",
     "cmV",
+    # 連想配列のキーがシークレット名でなければ伏せない
+    'config["timeout"] = "30"',
+    'config["label"] = "main"',
+    # ガードを満たさない短い base64 プレフィックス
+    "LS0tLS1CRUdJTi",
     "AKIA",
     "dapi",
     "eyJ is a jwt prefix",

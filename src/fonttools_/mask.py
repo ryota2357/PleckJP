@@ -7,10 +7,13 @@
 伏せ字の対象は、下のデータテーブルに並ぶプレフィックスの直後に続く英数字の連続。
 テーブルの出発点は ObelMonoMasked-Regular.ttf の GSUB (ccmp の ChainContextSubst) から
 抽出した全プレフィックスで、そこへ PleckJP 側で不足していたものを追加している
-(現在 187 プレフィックス + 539 の代入コンテキスト)。
+(現在 207 プレフィックス + 847 の代入コンテキスト)。
 
     sk-ant-api03-XXXX   ->  sk-•••-•••••-••••
     ghp_abc123          ->  ghp_••••••
+    cmVmdGtuOjAxOjE3NjU ->  cmVmdG••••••••••••
+    LS0tLS1CRUdJTiBSU0E ->  LS0tLS1CRUdJTi•••••••
+    config["TOKEN"] = "ab" ->  config["TOKEN"] = "••"
     xoxb-123-abc        ->  xoxb-•••-•••
     task-runner         ->  task-runner      (誤爆しない)
     oc_sk_abc123        ->  oc_sk_••••••
@@ -22,8 +25,10 @@ Note: ObelMonoMasked は「キーの後半だけを伏せる」など独自の�
       全プレフィックスに適用する。プレフィックスの一覧だけを Obel と揃える。
 Note: 伏せ字は英数字 + 区切り (`-`, `_`, `:`, `/`, `.`) の範囲で継続する。空白・クォート・
       `,` などの記号で止まるので、`sk-abc def` の `def` はそのまま残る。
-Note: PEM ヘッダは末尾の `-----` だけを伏せ字にする (Obel と同じ)。base64 本文は
-      行をまたぐため GSUB では追跡できず、伏せ字にならない。
+Note: PEM ヘッダは末尾の `-----` だけを伏せ字にする (Obel と同じ)。生の PEM 本文は
+      行をまたぐため GSUB では追跡できず、伏せ字にならない。ただし PEM 全体を
+      base64 で包んだ 1 行の形 (`LS0tLS1CRUdJTi...`) は、base64 プレフィックスを
+      トリガーにして英数字の連続を伏せ字にする。
 
 使い方:
 
@@ -142,11 +147,17 @@ GUARDED_PREFIXES = (
     ("AKIA", 8),
     ("ATATT", 8),
     ("cmV", 12),
+    ("cmVmdG", 4),
     ("dapi", 8),
     ("eyJ", 8),
     ("oy2", 8),
     ("pat", 12),
     ("xprv", 8),
+    # base64 でエンコードされた PEM / OpenSSH 秘密鍵のヘッダ
+    # (`LS0tLS1CRUdJTi` = "-----BEGIN ", `b3BlbnNzaC1rZXkt` = "openssh-key-")。
+    # 16 文字が固定なので一般語との衝突は実質なく、後続の長さガードは 4 で足りる。
+    ("LS0tLS1CRUdJTi", 4),
+    ("b3BlbnNzaC1rZXkt", 4),
 )
 
 # URL / DSN 形式のプレフィックス。直後のユーザー情報を伏せ字にする
@@ -195,7 +206,20 @@ CONTEXT_KEYS = (
 # `=` / ` = ` / `: ` はクォートなしの値 (`TOKEN=abc`, `aws_session_token = abc`,
 # `password: abc`) を対象にする。`KEY=` は直前が英字なら誤爆ブロッカーが弾く
 # (`MONKEY=` は伏せない)。
-CONTEXT_TEMPLATES = ('="', "='", ': "', ": '", "=", " = ", ": ")
+CONTEXT_TEMPLATES = (
+    '="',
+    "='",
+    ': "',
+    ": '",
+    "=",
+    " = ",
+    ": ",
+    # 連想配列 / 辞書のキー代入 (`config["API_TOKEN"] = "..."`, `cfg['TOKEN'] = '...'`)
+    '"] = "',
+    '\'"] = \'',
+    "'\'] = \"",
+    "'] = '",
+)
 
 # mask.dot のアウトラインを借りる元グリフ (先頭から順に探す)
 MASK_SOURCE_GLYPHS = ("uni2022", "period", "uni25CF", "uni0041")
