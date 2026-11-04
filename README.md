@@ -86,9 +86,12 @@ make release
 ## Masked バリアント (API キーの伏せ字)
 
 代表的なプロバイダーの API キーを伏せ字で表示する `PleckJP Masked` ファミリーを生成できます。
-82 プロバイダー / 200+ プレフィックス (OpenAI, Anthropic, GitHub, GitLab, Slack, Stripe,
-AWS, Cloudflare, DigitalOcean, Datadog, npm, Vercel, Supabase, Sentry, Hugging Face など) と、
-`KEY="..."` 形式の代入コンテキスト、PEM ヘッダに対応しています。
+187 プレフィックス (OpenAI, Anthropic, GitHub, GitLab, Slack, Stripe, AWS, Google, Atlassian,
+Cloudflare, DigitalOcean, Datadog, npm, Vercel, Supabase, Sentry, Hugging Face, Airtable,
+Databricks, 1Password, PyPI, NuGet, JFrog, JWT, age, Bitcoin など) と、539 通りの代入コンテキスト
+(`KEY="..."`, `TOKEN=...`, `password: ...`, `--token=...` など)、HTTP ヘッダ (`Authorization: Bearer`)、
+URL / DSN の資格情報 (`postgres://user:pass@host`)、Telegram Bot Token、Discord Webhook、
+PEM ヘッダに対応しています。
 通常の `make` や `make release` では生成されず、次のコマンドで明示的にビルドします。
 入力に `build/PleckJP-*.ttf` を使うので、先に通常のビルドを済ませてください。
 
@@ -102,20 +105,31 @@ make masked   # build/PleckJP Masked-*.ttf が生成される
 OPENAI_API_KEY=sk-proj-AbCdEf123456   ->   OPENAI_API_KEY=sk-proj-••••••••••••
 gh auth token: ghp_16C7e42F292c6912   ->   gh auth token: ghp_••••••••••••••••
 SLACK=xoxb-1234-5678-abcdef           ->   SLACK=xoxb-••••-••••-••••••
+AIzaSyDxYz1234567890abcdefg           ->   AIza•••••••••••••••••••••••
+patABCDEFGHIJKLMN.1234567890abcdef    ->   pat••••••••••••••.••••••••••••••••
+123456789:AAHdqTcvCH1vGWJxfSeofSAs0    ->   123456789:••••••••••••••••••••••••
+postgres://admin:s3cret@db:5432/x     ->   postgres://•••••:••••••@db:5432/x
 ```
 
 - 伏せ字になるのは、対応プレフィックスの直後に続く英数字です (`oc_sk_...` のような `_sk_` 連結も対象)
 - 直前が英字の場合は伏せ字にしません (`task-runner`, `risk_assessment`, `desk-top` はそのまま)
 - 長いプレフィックスが優先されます (`sk-ant-api03-XyZ` はプレフィックス全体を残して本文だけ伏せる)
 - 伏せ字は空白・クォートなどの記号で止まります (`sk-abc def` の `def` はそのまま)
-- キー内部の区切り (`-`, `_`) を挟んでも伏せ字は継続します (`xoxb-1234-5678-abc` は全体が伏せ字)
-- ドット区切り (`ya29.a0Af...`, `dp.st....`) は最初の区間だけが伏せ字になります
+- 区切り (`-`, `_`, `:`, `/`, `.`) を挟んでも伏せ字は継続します
+  (`xoxb-1234-5678-abc`, `patXXX.YYY` (Airtable), `eyJ...eyJ...` (JWT) は全体が伏せ字)
+- `pat` / `eyJ` / `cmV` のような短く一般語と衝突しうるプレフィックスは、直後に十分な長さの
+  英数字があるときだけ伏せ字にします (`pattern`, `path`, `patriotic`, `eyesight` はそのまま)
+- URL / DSN (`postgres://`, `mysql://`, `mongodb://`, `redis://`, `amqp://` など) は
+  ユーザー情報とパスワードを伏せ字にします。資格情報を持たない URL でもホスト名が
+  伏せ字になります (GSUB では「@ が後ろにあるか」を可変長で判定できないため)
+- `10:30` のような時刻は Telegram Bot Token と誤認しません (トークン側に 11 文字以上を要求)
 - PEM ヘッダは末尾の `-----` だけが伏せ字になります (base64 本文は行をまたぐため対象外)
 - `re_` や `pa-` のような短いプレフィックスは一般語にも当たります (`re_runner` は伏せ字)
 - あくまで描画だけの変化です。コピーしたテキストは元のままなので、貼り付け先には正しいキーが入ります
 
 プレフィックスの一覧は `src/fonttools_/mask.py` のデータテーブル
-(`HYPHEN_PREFIXES` / `UNDERSCORE_PREFIXES` / `DOT_PREFIXES` / `CONTEXT_KEYS` / `PEM_HEADERS`)
+(`HYPHEN_PREFIXES` / `UNDERSCORE_PREFIXES` / `DOT_PREFIXES` / `GUARDED_PREFIXES` /
+`URL_PREFIXES` / `HEADER_PREFIXES` / `CONTEXT_KEYS` / `PEM_HEADERS`)
 にまとまっています。追加したいプロバイダーがあれば、そこに 1 行足すだけで反映されます。
 
 仕組みは OpenType の `calt` (Contextual Alternates) フィーチャーを 1 つ追加しているだけで、

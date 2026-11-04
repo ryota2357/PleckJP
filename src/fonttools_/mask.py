@@ -5,20 +5,23 @@
 (新しいルックアップは LookupList の末尾に追加するので既存インデックスは不変)。
 
 伏せ字の対象は、下のデータテーブルに並ぶプレフィックスの直後に続く英数字の連続。
-テーブルは ObelMonoMasked-Regular.ttf の GSUB (ccmp の ChainContextSubst) から
-抽出した全プレフィックスで、82 プロバイダー / 200+ プレフィックスを網羅する。
+テーブルの出発点は ObelMonoMasked-Regular.ttf の GSUB (ccmp の ChainContextSubst) から
+抽出した全プレフィックスで、そこへ PleckJP 側で不足していたものを追加している
+(現在 187 プレフィックス + 539 の代入コンテキスト)。
 
     sk-ant-api03-XXXX   ->  sk-•••-•••••-••••
     ghp_abc123          ->  ghp_••••••
     xoxb-123-abc        ->  xoxb-•••-•••
     task-runner         ->  task-runner      (誤爆しない)
     oc_sk_abc123        ->  oc_sk_••••••
+    AIzaSyDxYz1234      ->  AIza••••••••••
+    pattern matching    ->  pattern matching (長さガードで誤爆しない)
 
 Note: ObelMonoMasked は「キーの後半だけを伏せる」など独自の判定を持つが、ここでは
       PleckJP 既存の素直な挙動 (プレフィックス直後の英数字の連続を最後まで潰す) を
       全プレフィックスに適用する。プレフィックスの一覧だけを Obel と揃える。
-Note: 伏せ字は英数字 + 内部区切り (`-`, `_`) の範囲で継続する。`.` や `+` などの記号で
-      止まるので、`ya29.a0Af...` のようなドット区切りのキーは最初の区間だけが伏せ字になる。
+Note: 伏せ字は英数字 + 区切り (`-`, `_`, `:`, `/`, `.`) の範囲で継続する。空白・クォート・
+      `,` などの記号で止まるので、`sk-abc def` の `def` はそのまま残る。
 Note: PEM ヘッダは末尾の `-----` だけを伏せ字にする (Obel と同じ)。base64 本文は
       行をまたぐため GSUB では追跡できず、伏せ字にならない。
 
@@ -48,9 +51,17 @@ MASK_GLYPH = "mask.dot"
 # 伏せ字にする文字 (キー本体に現れる英数字のみ。記号は残す)
 ALNUM_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 LETTER_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+DIGIT_CHARS = "0123456789"
 
 # 伏せ字を継続させる連結記号 (キー内部に現れる区切り。空白やクォートで伏せ字は止まる)
-GLUE_CHARS = ("-", "_")
+# 伏せ字の直後に来たら続きも伏せ字にする区切り。
+# `:` `@` をはさんだ資格情報 (URL / DSN) と `/` 区切りの Discord Webhook、
+# `.` 区切りの Airtable / JWT (`patXXXX.hex`, `eyJ...eyJ...sig`) を 1 つの規則で扱う。
+# Note: 区切りの後ろが英数字のときだけ継続するので、`. ` のように空白が入れば止まる。
+MASKED_SEPARATORS = ("-", "_", ":", "/", ".")
+
+# Telegram Bot Token (`<数字ID>:<トークン>`) と誤認しないために要求する英数字の最小数
+TELEGRAM_MIN_TOKEN = 11
 
 # PEM ヘッダ (末尾の `-----` を伏せ字にする)
 PEM_HEADERS = (
@@ -72,7 +83,7 @@ HYPHEN_PREFIXES = (
     "glimt-", "gloas-", "glpat-", "glptt-",
     "glrt-", "glrtr-", "glsoat-", "glwt-",
     "nvapi-", "pa-", "pat-eu1-", "pat-na1-",
-    "pplx-", "pul-", "sk-", "sk-admin-",
+    "pplx-", "pul-", "pypi-", "sk-", "sk-admin-",
     "sk-ant-", "sk-ant-admin01-", "sk-ant-api01-", "sk-ant-api03-",
     "sk-ant-oat01-", "sk-helicone-", "sk-lf-", "sk-or-v1-",
     "sk-proj-", "sk-proj-fedramp-", "sk-svcacct-", "sk-svcacct-fedramp-",
@@ -99,7 +110,7 @@ UNDERSCORE_PREFIXES = (
     "gsk_", "hf_", "lin_api_", "lin_oauth_",
     "lsv2_pt_", "lsv2_sk_", "lsv2_tr_", "nfb_",
     "nfc_", "nfo_", "nfp_", "nfu_",
-    "npm_", "ntn_", "pcsk_", "pha_",
+    "npm_", "ntn_", "ops_", "pcsk_", "pha_",
     "phr_", "phs_", "phx_", "pscale_app_secret_",
     "pscale_oauth_", "pscale_pw_", "pscale_tkn_", "r8_",
     "re_", "rk_live_", "rk_test_", "rubygems_",
@@ -122,12 +133,46 @@ DOT_PREFIXES = (
 # 終端記号を持たないプレフィックス (Asana の PAT)
 BARE_PREFIXES = ("Q~",)
 
+# 終端記号を持たず、しかも短いため一般語と衝突しうるプレフィックス。
+# (プレフィックス, 直後に必要な英数字の最小数) の形で持ち、lookahead で長さを要求する。
+# 例: `pat` は `pattern` (後続 4 文字) を巻き込まないが、Airtable の PAT (`pat` + 14) は伏せる。
+GUARDED_PREFIXES = (
+    ("AGE-SECRET-KEY-1", 8),
+    ("AIza", 8),
+    ("AKIA", 8),
+    ("ATATT", 8),
+    ("cmV", 12),
+    ("dapi", 8),
+    ("eyJ", 8),
+    ("oy2", 8),
+    ("pat", 12),
+    ("xprv", 8),
+)
+
+# URL / DSN 形式のプレフィックス。直後のユーザー情報を伏せ字にする
+# (`postgres://admin:secret@host` の `admin` と、`MASKED_SEPARATORS` 規則による `secret`)。
+# Note: 資格情報を持たない `postgres://localhost:5432/db` でもホスト名が伏せ字になる
+#       (GSUB では「@ が後ろにあるか」を可変長で判定できないため)。
+URL_PREFIXES = (
+    "amqp://", "amqps://", "discord.com/api/webhooks/",
+    "discordapp.com/api/webhooks/", "mongodb://", "mongodb+srv://",
+    "mysql://", "postgres://", "postgresql://",
+    "redis://", "rediss://",
+)
+
+# HTTP ヘッダ形式 (値が続くときだけ伏せ字にする)
+HEADER_PREFIXES = (
+    "Authorization: Basic ",
+    "Authorization: Bearer ",
+    "authorization: Bearer ",
+)
+
 # `KEY="..."` / `KEY: '...'` のような代入コンテキスト。値が続くときだけ伏せ字にする。
 # ベース名 × CONTEXT_TEMPLATES で展開する。
 CONTEXT_KEYS = (
     "--access-token", "--api-key", "--auth-token", "--password",
     "--secret", "--token", "ACCESS_KEY", "ACCOUNT_KEY",
-    "ADMIN_KEY", "APIKEY", "API_KEY", "APP_KEY",
+    "ADMIN_KEY", "APIKEY", "API_KEY", "APP_KEY", "AccountKey",
     "AUTH_KEY", "ApiKey", "DEPLOY_KEY", "ENCRYPTION_KEY",
     "HMAC_KEY", "JWT_KEY", "KEY", "LICENSE_KEY",
     "MASTER_KEY", "MYSQL_PWD", "PASSWD", "PASSWORD",
@@ -147,7 +192,10 @@ CONTEXT_KEYS = (
 )
 
 # 代入の書き方 (値の直前で終わる形だけを並べる)
-CONTEXT_TEMPLATES = ('="', "='", ': "', ": '")
+# `=` / ` = ` / `: ` はクォートなしの値 (`TOKEN=abc`, `aws_session_token = abc`,
+# `password: abc`) を対象にする。`KEY=` は直前が英字なら誤爆ブロッカーが弾く
+# (`MONKEY=` は伏せない)。
+CONTEXT_TEMPLATES = ('="', "='", ': "', ": '", "=", " = ", ": ")
 
 # mask.dot のアウトラインを借りる元グリフ (先頭から順に探す)
 MASK_SOURCE_GLYPHS = ("uni2022", "period", "uni25CF", "uni0041")
@@ -219,29 +267,51 @@ def add_mask_glyph(font: TTFont) -> str:
 
 
 def prefix_table() -> list:
-    """(プレフィックス, 種別) を長い順に並べて返す。
+    """(プレフィックス, 種別, lookahead 長) を長い順に並べて返す。
 
     長いプレフィックスを先に置かないと `sk-` が `sk-ant-api03-` を食ってしまい、
-    後続のルールが到達不能になる。種別は "alnum" (直後の英数字を伏せる) と
-    "pem" (末尾の `-----` を伏せる) の 2 種類。
+    後続のルールが到達不能になる。種別は "alnum" (直後の英数字を伏せる)、
+    "guarded" (直後に十分な長さの英数字があるときだけ伏せる)、
+    "pem" (末尾の `-----` を伏せる) の 3 種類。
+    lookahead 長は「入力 1 文字の後ろに追加で要求する英数字の数」。
     """
     seen = {}
-    for prefix in HYPHEN_PREFIXES + UNDERSCORE_PREFIXES + DOT_PREFIXES + BARE_PREFIXES:
-        seen[prefix] = "alnum"
+    for prefix in (
+        HYPHEN_PREFIXES
+        + UNDERSCORE_PREFIXES
+        + DOT_PREFIXES
+        + BARE_PREFIXES
+        + URL_PREFIXES
+        + HEADER_PREFIXES
+    ):
+        seen[prefix] = ("alnum", 0)
+    for prefix, min_alnum in GUARDED_PREFIXES:
+        seen[prefix] = ("guarded", min_alnum - 1)
     for key in CONTEXT_KEYS:
         for template in CONTEXT_TEMPLATES:
-            seen[f"{key}{template}"] = "alnum"
+            seen[f"{key}{template}"] = ("alnum", 0)
     for header in PEM_HEADERS:
-        seen[header] = "pem"
-    return sorted(seen.items(), key=lambda item: (-len(item[0]), item[0]))
+        seen[header] = ("pem", 0)
+    return sorted(
+        ((prefix, kind, lookahead) for prefix, (kind, lookahead) in seen.items()),
+        key=lambda item: (-len(item[0]), item[0]),
+    )
 
 
 def add_mask_lookups(font: TTFont, gsub: ot.GSUB, cmap: dict, mask_glyph: str) -> list:
-    """calt で使うルックアップを末尾に追加し、そのインデックスを返す。"""
+    """calt で使うルックアップを末尾に追加し、そのインデックスを返す。
+
+    ルックアップは「先頭グリフごとのグループ」に分割する。1 つの巨大な chain lookup に
+    すると、HarfBuzz が各文字位置で全サブテーブルを総当たりするため、テキスト描画が
+    目に見えて遅くなる (実測: 785 プレフィックスを 1 lookup に詰めると 3 倍強)。
+    分割しても結果は同じで、calt は全ルックアップを左から右へ順に適用するので、
+    前半 (トリガー) の伏せ字を後半 (継続) のルックアップが引き継げる。
+    """
     glyph = lambda ch: cmap[ord(ch)]  # noqa: E731
 
     alnum = [glyph(ch) for ch in ALNUM_CHARS]
     letter = [glyph(ch) for ch in LETTER_CHARS]
+    digit = [glyph(ch) for ch in DIGIT_CHARS]
 
     # 誤爆ブロッカー用の無変換ルックアップ (letter を letter に置換するだけ)
     noop = add_lookup(gsub, 1, [buildSingleSubstSubtable({glyph("s"): glyph("s")})])
@@ -251,32 +321,60 @@ def add_mask_lookups(font: TTFont, gsub: ot.GSUB, cmap: dict, mask_glyph: str) -
     # PEM ヘッダ末尾の `-----` を伏せるためのルックアップ
     pem = add_lookup(gsub, 1, [buildSingleSubstSubtable({glyph("-"): mask_glyph})])
 
-    subtables = []
-    for prefix, kind in prefix_table():
+    groups = {}
+    for prefix, kind, lookahead in prefix_table():
         chars = [glyph(ch) for ch in prefix]
+        rules = groups.setdefault(prefix[0], [])
         # 1) ブロッカー: 直前が英字なら何もしない (task- / risk_ / xsk_ を弾く)
-        subtables.append(chain_rule(font, [letter], [[c] for c in chars], [(0, noop)]))
+        rules.append(chain_rule(font, [letter], [[c] for c in chars], [(0, noop)]))
         if kind == "pem":
             # 2) PEM: ヘッダ末尾の `-----` を伏せ字にする
             records = [(i, pem) for i in range(len(chars) - PEM_TAIL_LEN, len(chars))]
-            subtables.append(chain_rule(font, [], [[c] for c in chars], records))
+            rules.append(chain_rule(font, [], [[c] for c in chars], records))
         else:
             # 2) トリガー: プレフィックス直後の英数字 1 文字を伏せ字にする
-            subtables.append(
-                chain_rule(font, [], [[c] for c in chars] + [alnum], [(len(chars), mask)])
+            rules.append(
+                chain_rule(
+                    font,
+                    [],
+                    [[c] for c in chars] + [alnum],
+                    [(len(chars), mask)],
+                    [alnum] * lookahead,
+                )
             )
 
     # 3) 継続: 伏せ字の直後の英数字も伏せ字にする (英数字の連続を最後まで潰す)。
-    #    キー内部の区切り (- _) を挟んでも継続させるが、区切りの直前が伏せ字である
+    #    区切り (- _ : / .) を挟んでも継続させるが、区切りの直前が伏せ字である
     #    ことを条件にする (task-runner のような通常のハイフン連結を巻き込まない)。
-    subtables.append(chain_rule(font, [[mask_glyph]], [alnum], [(0, mask)]))
-    for glue_char in GLUE_CHARS:
-        subtables.append(
-            chain_rule(font, [[glyph(glue_char)], [mask_glyph]], [alnum], [(0, mask)])
+    tail = [chain_rule(font, [[mask_glyph]], [alnum], [(0, mask)])]
+    for separator in MASKED_SEPARATORS:
+        tail.append(
+            chain_rule(font, [[glyph(separator)], [mask_glyph]], [alnum], [(0, mask)])
         )
+    # 4) URL / DSN の資格情報 (`scheme://:password@host` のようにユーザー名が空の形)
+    tail.append(
+        chain_rule(
+            font,
+            [[glyph("/")], [glyph("/")]],
+            [[glyph(":")], alnum],
+            [(1, mask)],
+        )
+    )
+    # 5) Telegram Bot Token (`<数字ID>:<トークン>`)。時刻 (`12:30`) を巻き込まないよう
+    #    トークン側に十分な長さを要求する。
+    tail.append(
+        chain_rule(
+            font,
+            [digit],
+            [[glyph(":")], alnum],
+            [(1, mask)],
+            [alnum] * (TELEGRAM_MIN_TOKEN - 1),
+        )
+    )
 
-    chain = add_lookup(gsub, 6, subtables)
-    return [chain]
+    return [add_lookup(gsub, 6, rules) for _, rules in sorted(groups.items())] + [
+        add_lookup(gsub, 6, tail)
+    ]
 
 
 def add_lookup(gsub: ot.GSUB, lookup_type: int, subtables: list) -> int:
@@ -291,17 +389,20 @@ def add_lookup(gsub: ot.GSUB, lookup_type: int, subtables: list) -> int:
     return len(lookups) - 1
 
 
-def chain_rule(font: TTFont, backtrack: list, inputs: list, records: list) -> ot.ChainContextSubst:
+def chain_rule(
+    font: TTFont, backtrack: list, inputs: list, records: list, lookahead: list = None
+) -> ot.ChainContextSubst:
     """ChainContextSubst (format 3) を 1 ルール分組み立てる。
 
     backtrack は「直前のグリフ」を先頭にした逆順のリスト、inputs は入力シーケンス
-    (各要素はグリフ名のリスト = クラス)、records は (sequenceIndex, lookupIndex)。
+    (各要素はグリフ名のリスト = クラス)、records は (sequenceIndex, lookupIndex)、
+    lookahead は入力シーケンスの後ろに要求するグリフ (同形式、任意)。
     """
     subtable = ot.ChainContextSubst()
     subtable.Format = 3
     subtable.BacktrackCoverage = [coverage(font, g) for g in backtrack]
     subtable.InputCoverage = [coverage(font, g) for g in inputs]
-    subtable.LookAheadCoverage = []
+    subtable.LookAheadCoverage = [coverage(font, g) for g in (lookahead or [])]
     subtable.SubstLookupRecord = [subst_record(i, lookup) for i, lookup in records]
     return subtable
 

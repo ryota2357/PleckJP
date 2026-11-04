@@ -89,6 +89,39 @@ MASKED_CASES = [
     # PEM ヘッダ
     ("-----BEGIN RSA PRIVATE KEY-----", "-----BEGIN RSA PRIVATE KEY•••••"),
     ("-----BEGIN OPENSSH PRIVATE KEY-----", "-----BEGIN OPENSSH PRIVATE KEY•••••"),
+    # Google (旧 API キー) / AWS / Databricks / 1Password / Atlassian
+    ("AIzaSyDxYz1234567890", "AIza••••••••••••••••"),
+    ("AKIAIOSFODNN7EXAMPLE", "AKIA••••••••••••••••"),
+    ("dapi1234567890abcdef", "dapi••••••••••••••••"),
+    ("ops_abcdefghijkl", "ops_••••••••••••"),
+    ("ATATT3xFfGF0aBcDeF", "ATATT•••••••••••••"),
+    # Bitcoin / age / PyPI / NuGet / JFrog
+    ("xprv9s21ZrQH143K3abc", "xprv••••••••••••••••"),
+    ("AGE-SECRET-KEY-1QZ4QZ4QZ4", "AGE-SECRET-KEY-1•••••••••"),
+    ("pypi-AgEIcHlwaS5vcmc", "pypi-•••••••••••••••"),
+    ("oy2abcdefghijklmnop", "oy2••••••••••••••••"),
+    ("cmVhbGx5LWxvbmctYmFzZTY0", "cmV•••••••••••••••••••••"),
+    # Airtable / JWT (ドットをはさんでも継続する)
+    ("patABCDEFGHIJKLMN.1234567890abcdef", "pat••••••••••••••.••••••••••••••••"),
+    ("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIx", "eyJ•••••••••••••••••.••••••••••••"),
+    # Discord Webhook
+    (
+        "https://discord.com/api/webhooks/1234567890/abcdefTOKEN",
+        "https://discord.com/api/webhooks/••••••••••/•••••••••••",
+    ),
+    # Telegram Bot Token (`<数字ID>:<トークン>`)
+    ("123456789:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw", "123456789:••••••••••••••••••••••••••••••••••"),
+    # クォートなしの代入コンテキスト
+    ("TOKEN=abcdefgh", "TOKEN=••••••••"),
+    ("--token=abcdefgh", "--token=••••••••"),
+    ("AccountKey=abcdefgh", "AccountKey=••••••••"),
+    ("aws_session_token = abcdefgh", "aws_session_token = ••••••••"),
+    ("password: hunter2", "password: •••••••"),
+    ("?api_key=abcdefgh", "?api_key=••••••••"),
+    ("Authorization: Bearer abcdefgh", "Authorization: Bearer ••••••••"),
+    # URL / DSN の資格情報
+    ("postgres://admin:s3cret@db:5432/x", "postgres://•••••:••••••@db:5432/x"),
+    ("postgres://:s3cret@db:5432/x", "postgres://:••••••@db:5432/x"),
 ]
 
 # 伏せ字になってはいけない入力 (誤爆ブロッカー)
@@ -105,6 +138,27 @@ UNMASKED_CASES = [
     "skeleton",
     "not-a-key",
     "monkey-business",
+    # 長さガード付きプレフィックス (`pat` など) は一般語を巻き込まない
+    "pattern matching",
+    "patch notes",
+    "path/to/file",
+    "patriotic",
+    "patriarchal",
+    "eyesight",
+    "cmV",
+    "AKIA",
+    "dapi",
+    "eyJ is a jwt prefix",
+    # 時刻は Telegram Bot Token と誤認しない
+    "10:30",
+    "12:00:00",
+    "2024-01-01 12:34:56",
+    # 資格情報を持たない URL
+    "http://example.com/a/b",
+    "https://example.com/path/to/file",
+    # `KEY=` の誤爆ブロッカー
+    "monkey=abc",
+    "PUBKEY=abc",
 ]
 
 # 伏せ字が止まるべき入力 (区切り文字の後)
@@ -113,6 +167,8 @@ STOP_CASES = [
     ("sk-abc,next", "next"),
     ("ghp_abc def", "def"),
     ("API_KEY=\"abc\" def", "def"),
+    ("patABCDEFGHIJKLMN. next", "next"),
+    ("postgres://admin:s3cret@db:5432/x", "5432/x"),
 ]
 
 # 既存の見た目が変わっていないことを確認する入力 (ASCII / かな / 漢字 / 合字)
@@ -155,14 +211,17 @@ def main() -> int:
             failures.append(f"masked: {text!r} -> {actual!r} (expected {expected!r})")
 
     # データテーブルの全プレフィックスを機械的に検証する (代表例の取りこぼしを防ぐ)
-    for prefix, kind in mask_module.prefix_table():
+    filler = "abc123xyz789"
+    for prefix, kind, lookahead in mask_module.prefix_table():
         cases += 1
         if kind == "pem":
             actual = masked.render(prefix)
             expected = prefix[: -mask_module.PEM_TAIL_LEN] + DOT * mask_module.PEM_TAIL_LEN
         else:
-            actual = masked.render(prefix + "abc123")
-            expected = prefix + DOT * 6
+            # 長さガード付きのプレフィックスは lookahead 分だけ余分に必要
+            assert len(filler) >= lookahead + 1, prefix
+            actual = masked.render(prefix + filler)
+            expected = prefix + DOT * len(filler)
         if actual != expected:
             failures.append(f"table: {prefix!r} -> {actual!r} (expected {expected!r})")
 
