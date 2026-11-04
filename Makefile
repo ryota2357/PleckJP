@@ -16,6 +16,9 @@ BUNDLE_NF_SCRIPT := src/fontforge_/bundle_nf.py
 BRAILLE_GEN_SCRIPT := src/fontforge_/braille_gen.py
 PATCH_SCRIPT := src/fontforge_/patch.py
 FONTTOOLS_SCRIPT := src/fonttools_/main.py
+MASK_SCRIPT := src/fonttools_/mask.py
+
+MASKED_FAMILY := PleckJP Masked
 
 
 .PHONY: all
@@ -64,6 +67,15 @@ with-fontforge: $(CACHE_DIR) $(addprefix $(CACHE_DIR)/PleckJP-, $(addsuffix .ttf
 .PHONY: with-fonttools
 with-fonttools: $(BUILD_DIR) $(addprefix $(BUILD_DIR)/PleckJP-, $(addsuffix .ttf, $(FONT_STYLES)))
 	@echo "Completed: fonttools"
+
+# API キーの伏せ字バリアント (PleckJP Masked-*.ttf) を生成する。
+# 通常のビルド (all / release) には含まれない。
+.PHONY: masked
+masked: $(BUILD_DIR) $(addprefix $(BUILD_DIR)/PleckJP-, $(addsuffix .ttf, $(FONT_STYLES))) $(MASK_SCRIPT)
+	@for style in $(FONT_STYLES); do \
+		python3 $(MASK_SCRIPT) $(BUILD_DIR)/PleckJP-$$style.ttf "$(BUILD_DIR)/$(MASKED_FAMILY)-$$style.ttf" 2>> $(ERROR_LOG_FILE) || exit 1; \
+	done
+	@echo "Completed: masked"
 
 # Do not renove intermediate TTF files
 .SECONDARY: $(wildcard *.ttf)

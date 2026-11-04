@@ -83,6 +83,46 @@ make release
 
 </details>
 
+## Masked バリアント (API キーの伏せ字)
+
+`sk-` / `sk_` で始まる API キーを伏せ字で表示する `PleckJP Masked` ファミリーを生成できます。
+通常の `make` や `make release` では生成されず、次のコマンドで明示的にビルドします。
+入力に `build/PleckJP-*.ttf` を使うので、先に通常のビルドを済ませてください。
+
+```sh
+make masked   # build/PleckJP Masked-*.ttf が生成される
+```
+
+表示例:
+
+```text
+OPENAI_API_KEY=sk-ant-api03-AbCdEf   ->   OPENAI_API_KEY=sk-•••-•••••-••••••
+```
+
+- 伏せ字になるのは `sk-` / `sk_` の直後に続く英数字です (`oc_sk_...` のような `_sk_` 連結も対象)
+- 直前が英字の場合は伏せ字にしません (`task-runner`, `risk_assessment`, `desk-top` はそのまま)
+- 伏せ字は空白・クォートなどの記号で止まります (`sk-abc def` の `def` はそのまま)
+- キー内部の区切り (`-`, `_`) を挟んでも伏せ字は継続します (`sk-ant-api03-XyZ` は全体が伏せ字)
+- あくまで描画だけの変化です。コピーしたテキストは元のままなので、貼り付け先には正しいキーが入ります
+
+仕組みは OpenType の `calt` (Contextual Alternates) フィーチャーを 1 つ追加しているだけで、
+既存のフィーチャーやグリフには一切手を加えていません (追加グリフは `mask.dot` の 1 つだけ)。
+そのため `calt` を無効にすれば、フォントを切り替えずに元の表示へ戻せます。
+
+```jsonc
+// 例: VS Code の settings.json
+"editor.fontLigatures": "'calt' 0"
+```
+
+`calt` を適用するかどうかは描画側の実装に依存します。HarfBuzz を使うターミナルやエディタ
+(WezTerm, Kitty, VS Code など) では既定で有効です。
+
+動作確認は `src/fonttools_/mask_test.py` で行えます (uharfbuzz が必要。未インストール時は SKIP)。
+
+```sh
+python3 src/fonttools_/mask_test.py
+```
+
 ## ライセンス
 
 - フォントの合成スクリプトは MIT License にてライセンスされています。
