@@ -4,12 +4,23 @@
 `PleckJP Masked-*.ttf` を出力する。既存のフィーチャー・ルックアップには一切触れない
 (新しいルックアップは LookupList の末尾に追加するので既存インデックスは不変)。
 
-伏せ字の対象は `sk-` / `sk_` (および `oc_sk_` のような `_sk_` 連結) の直後に続く
-英数字の連続。例:
+伏せ字の対象は、下のデータテーブルに並ぶプレフィックスの直後に続く英数字の連続。
+テーブルは ObelMonoMasked-Regular.ttf の GSUB (ccmp の ChainContextSubst) から
+抽出した全プレフィックスで、82 プロバイダー / 200+ プレフィックスを網羅する。
 
     sk-ant-api03-XXXX   ->  sk-•••-•••••-••••
-    oc_sk_abc123        ->  oc_sk_••••••
+    ghp_abc123          ->  ghp_••••••
+    xoxb-123-abc        ->  xoxb-•••-•••
     task-runner         ->  task-runner      (誤爆しない)
+    oc_sk_abc123        ->  oc_sk_••••••
+
+Note: ObelMonoMasked は「キーの後半だけを伏せる」など独自の判定を持つが、ここでは
+      PleckJP 既存の素直な挙動 (プレフィックス直後の英数字の連続を最後まで潰す) を
+      全プレフィックスに適用する。プレフィックスの一覧だけを Obel と揃える。
+Note: 伏せ字は英数字 + 内部区切り (`-`, `_`) の範囲で継続する。`.` や `+` などの記号で
+      止まるので、`ya29.a0Af...` のようなドット区切りのキーは最初の区間だけが伏せ字になる。
+Note: PEM ヘッダは末尾の `-----` だけを伏せ字にする (Obel と同じ)。base64 本文は
+      行をまたぐため GSUB では追跡できず、伏せ字にならない。
 
 使い方:
 
@@ -37,14 +48,112 @@ MASK_GLYPH = "mask.dot"
 # 伏せ字にする文字 (キー本体に現れる英数字のみ。記号は残す)
 ALNUM_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 LETTER_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-TRIGGER_CHARS = ("s", "k")
-SEPARATOR_CHARS = ("-", "_")
 
 # 伏せ字を継続させる連結記号 (キー内部に現れる区切り。空白やクォートで伏せ字は止まる)
 GLUE_CHARS = ("-", "_")
 
+# PEM ヘッダ (末尾の `-----` を伏せ字にする)
+PEM_HEADERS = (
+    "BEGIN DSA PRIVATE KEY-----",
+    "BEGIN EC PRIVATE KEY-----",
+    "BEGIN ENCRYPTED PRIVATE KEY-----",
+    "BEGIN OPENSSH PRIVATE KEY-----",
+    "BEGIN PGP PRIVATE KEY BLOCK-----",
+    "BEGIN PRIVATE KEY-----",
+    "BEGIN RSA PRIVATE KEY-----",
+)
+
+# `-` 終端のプロバイダープレフィックス (OpenAI / Anthropic / GitLab / Slack / Stripe ...)
+HYPHEN_PREFIXES = (
+    "CFPAT-", "GOCSPX-", "HRKU-", "NRAK-",
+    "NRII-", "PMAK-", "access-development-", "access-production-",
+    "access-sandbox-", "csk-", "fc-", "glagent-",
+    "glcbt-", "gldt-", "glffct-", "glft-",
+    "glimt-", "gloas-", "glpat-", "glptt-",
+    "glrt-", "glrtr-", "glsoat-", "glwt-",
+    "nvapi-", "pa-", "pat-eu1-", "pat-na1-",
+    "pplx-", "pul-", "sk-", "sk-admin-",
+    "sk-ant-", "sk-ant-admin01-", "sk-ant-api01-", "sk-ant-api03-",
+    "sk-ant-oat01-", "sk-helicone-", "sk-lf-", "sk-or-v1-",
+    "sk-proj-", "sk-proj-fedramp-", "sk-svcacct-", "sk-svcacct-fedramp-",
+    "sq0atp-", "sq0csb-", "sq0csp-", "tvly-",
+    "xai-", "xapp-", "xoxa-", "xoxb-",
+    "xoxe-", "xoxe.xapp-", "xoxe.xoxb-", "xoxe.xoxp-",
+    "xoxo-", "xoxp-", "xoxr-", "xoxs-",
+    "xwfp-",
+)
+
+# `_` 終端のプロバイダープレフィックス (GitHub / GitLab / Stripe / npm / Vercel ...)
+UNDERSCORE_PREFIXES = (
+    "CCIPAT_", "CCIPRJ_", "CLOJARS_", "aph0_",
+    "api_org_", "bkaa_", "bkaj_", "bkar_",
+    "bkct_", "bkjat_", "bkpat_", "bkps_",
+    "bkpt_", "bktx_", "bkua_", "cfast_",
+    "cfat_", "cfk_", "cfoat_", "cfut_",
+    "cio_tp_", "crsr_", "dckr_oat_", "dckr_pat_",
+    "ddapp_", "ddpat_", "ddsat_", "doo_v1_",
+    "dop_v1_", "dor_v1_", "figd_", "fm1a_",
+    "fm1r_", "fm2_", "fo1_", "fw_",
+    "gho_", "ghp_", "ghr_", "ghs_",
+    "ghu_", "github_pat_", "glc_", "glsa_",
+    "gsk_", "hf_", "lin_api_", "lin_oauth_",
+    "lsv2_pt_", "lsv2_sk_", "lsv2_tr_", "nfb_",
+    "nfc_", "nfo_", "nfp_", "nfu_",
+    "npm_", "ntn_", "pcsk_", "pha_",
+    "phr_", "phs_", "phx_", "pscale_app_secret_",
+    "pscale_oauth_", "pscale_pw_", "pscale_tkn_", "r8_",
+    "re_", "rk_live_", "rk_test_", "rubygems_",
+    "sb_secret_", "sbp_", "sgp_", "shpat_",
+    "shpca_", "shppa_", "shpss_", "sk_",
+    "sk_live_", "sk_org_", "sk_test_", "sntrys_",
+    "sntryu_", "sqa_", "sqp_", "squ_",
+    "tfp_", "tgp_v1_", "vca_", "vck_",
+    "vcp_", "vcr_", "whsec_",
+)
+
+# `.` 終端のプロバイダープレフィックス (Google OAuth / DigitalOcean / HashiCorp ...)
+DOT_PREFIXES = (
+    ".atlasv1.", "AQ.", "SG.", "dp.audit.",
+    "dp.ct.", "dp.pt.", "dp.sa.", "dp.said.",
+    "dp.scim.", "dp.st.", "hvb.", "hvr.",
+    "hvs.", "ya29.",
+)
+
+# 終端記号を持たないプレフィックス (Asana の PAT)
+BARE_PREFIXES = ("Q~",)
+
+# `KEY="..."` / `KEY: '...'` のような代入コンテキスト。値が続くときだけ伏せ字にする。
+# ベース名 × CONTEXT_TEMPLATES で展開する。
+CONTEXT_KEYS = (
+    "--access-token", "--api-key", "--auth-token", "--password",
+    "--secret", "--token", "ACCESS_KEY", "ACCOUNT_KEY",
+    "ADMIN_KEY", "APIKEY", "API_KEY", "APP_KEY",
+    "AUTH_KEY", "ApiKey", "DEPLOY_KEY", "ENCRYPTION_KEY",
+    "HMAC_KEY", "JWT_KEY", "KEY", "LICENSE_KEY",
+    "MASTER_KEY", "MYSQL_PWD", "PASSWD", "PASSWORD",
+    "PGPASSWORD", "PRIVATE_KEY", "Password", "SECRET",
+    "SECRET_KEY", "SERVICE_KEY", "SERVICE_ROLE_KEY", "SIGNING_KEY",
+    "SUBSCRIPTION_KEY", "Secret", "TOKEN", "Token",
+    "_KEY", "_access_token", "_api_key", "_apikey",
+    "_auth", "_authToken", "_auth_token", "_client_secret",
+    "_passwd", "_password", "_refresh_token", "_secret",
+    "_secret_key", "accessKey", "accessToken", "access_key",
+    "access_token", "api-key", "apiKey", "apiSecret",
+    "api_key", "api_secret", "apikey", "authToken",
+    "auth_token", "aws_secret_access_key", "aws_session_token", "clientSecret",
+    "client_secret", "passwd", "password", "privateKey",
+    "private_key", "private_key_id", "refreshToken", "refresh_token",
+    "secret", "secretKey", "secret_key", "token",
+)
+
+# 代入の書き方 (値の直前で終わる形だけを並べる)
+CONTEXT_TEMPLATES = ('="', "='", ': "', ": '")
+
 # mask.dot のアウトラインを借りる元グリフ (先頭から順に探す)
 MASK_SOURCE_GLYPHS = ("uni2022", "period", "uni25CF", "uni0041")
+
+# PEM ヘッダの末尾で伏せる `-----` の長さ
+PEM_TAIL_LEN = 5
 
 
 def main() -> None:
@@ -109,31 +218,54 @@ def add_mask_glyph(font: TTFont) -> str:
 # --------------------------------------------------------------- lookups
 
 
+def prefix_table() -> list:
+    """(プレフィックス, 種別) を長い順に並べて返す。
+
+    長いプレフィックスを先に置かないと `sk-` が `sk-ant-api03-` を食ってしまい、
+    後続のルールが到達不能になる。種別は "alnum" (直後の英数字を伏せる) と
+    "pem" (末尾の `-----` を伏せる) の 2 種類。
+    """
+    seen = {}
+    for prefix in HYPHEN_PREFIXES + UNDERSCORE_PREFIXES + DOT_PREFIXES + BARE_PREFIXES:
+        seen[prefix] = "alnum"
+    for key in CONTEXT_KEYS:
+        for template in CONTEXT_TEMPLATES:
+            seen[f"{key}{template}"] = "alnum"
+    for header in PEM_HEADERS:
+        seen[header] = "pem"
+    return sorted(seen.items(), key=lambda item: (-len(item[0]), item[0]))
+
+
 def add_mask_lookups(font: TTFont, gsub: ot.GSUB, cmap: dict, mask_glyph: str) -> list:
     """calt で使うルックアップを末尾に追加し、そのインデックスを返す。"""
     glyph = lambda ch: cmap[ord(ch)]  # noqa: E731
 
     alnum = [glyph(ch) for ch in ALNUM_CHARS]
     letter = [glyph(ch) for ch in LETTER_CHARS]
-    s, k = (glyph(ch) for ch in TRIGGER_CHARS)
 
     # 誤爆ブロッカー用の無変換ルックアップ (letter を letter に置換するだけ)
-    noop = add_lookup(gsub, 1, [buildSingleSubstSubtable({s: s})])
+    noop = add_lookup(gsub, 1, [buildSingleSubstSubtable({glyph("s"): glyph("s")})])
     mask = add_lookup(
         gsub, 1, [buildSingleSubstSubtable({g: mask_glyph for g in alnum})]
     )
+    # PEM ヘッダ末尾の `-----` を伏せるためのルックアップ
+    pem = add_lookup(gsub, 1, [buildSingleSubstSubtable({glyph("-"): mask_glyph})])
 
     subtables = []
-    for sep_char in SEPARATOR_CHARS:
-        sep = glyph(sep_char)
+    for prefix, kind in prefix_table():
+        chars = [glyph(ch) for ch in prefix]
         # 1) ブロッカー: 直前が英字なら何もしない (task- / risk_ / xsk_ を弾く)
-        subtables.append(
-            chain_rule(font, [letter], [[s], [k], [sep]], [(0, noop)])
-        )
-        # 2) トリガー: `sk-` / `sk_` の直後の英数字 1 文字を伏せ字にする
-        subtables.append(
-            chain_rule(font, [], [[s], [k], [sep], alnum], [(3, mask)])
-        )
+        subtables.append(chain_rule(font, [letter], [[c] for c in chars], [(0, noop)]))
+        if kind == "pem":
+            # 2) PEM: ヘッダ末尾の `-----` を伏せ字にする
+            records = [(i, pem) for i in range(len(chars) - PEM_TAIL_LEN, len(chars))]
+            subtables.append(chain_rule(font, [], [[c] for c in chars], records))
+        else:
+            # 2) トリガー: プレフィックス直後の英数字 1 文字を伏せ字にする
+            subtables.append(
+                chain_rule(font, [], [[c] for c in chars] + [alnum], [(len(chars), mask)])
+            )
+
     # 3) 継続: 伏せ字の直後の英数字も伏せ字にする (英数字の連続を最後まで潰す)。
     #    キー内部の区切り (- _) を挟んでも継続させるが、区切りの直前が伏せ字である
     #    ことを条件にする (task-runner のような通常のハイフン連結を巻き込まない)。

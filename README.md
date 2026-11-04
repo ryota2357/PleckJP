@@ -85,7 +85,10 @@ make release
 
 ## Masked バリアント (API キーの伏せ字)
 
-`sk-` / `sk_` で始まる API キーを伏せ字で表示する `PleckJP Masked` ファミリーを生成できます。
+代表的なプロバイダーの API キーを伏せ字で表示する `PleckJP Masked` ファミリーを生成できます。
+82 プロバイダー / 200+ プレフィックス (OpenAI, Anthropic, GitHub, GitLab, Slack, Stripe,
+AWS, Cloudflare, DigitalOcean, Datadog, npm, Vercel, Supabase, Sentry, Hugging Face など) と、
+`KEY="..."` 形式の代入コンテキスト、PEM ヘッダに対応しています。
 通常の `make` や `make release` では生成されず、次のコマンドで明示的にビルドします。
 入力に `build/PleckJP-*.ttf` を使うので、先に通常のビルドを済ませてください。
 
@@ -96,14 +99,24 @@ make masked   # build/PleckJP Masked-*.ttf が生成される
 表示例:
 
 ```text
-OPENAI_API_KEY=sk-ant-api03-AbCdEf   ->   OPENAI_API_KEY=sk-•••-•••••-••••••
+OPENAI_API_KEY=sk-proj-AbCdEf123456   ->   OPENAI_API_KEY=sk-proj-••••••••••••
+gh auth token: ghp_16C7e42F292c6912   ->   gh auth token: ghp_••••••••••••••••
+SLACK=xoxb-1234-5678-abcdef           ->   SLACK=xoxb-••••-••••-••••••
 ```
 
-- 伏せ字になるのは `sk-` / `sk_` の直後に続く英数字です (`oc_sk_...` のような `_sk_` 連結も対象)
+- 伏せ字になるのは、対応プレフィックスの直後に続く英数字です (`oc_sk_...` のような `_sk_` 連結も対象)
 - 直前が英字の場合は伏せ字にしません (`task-runner`, `risk_assessment`, `desk-top` はそのまま)
+- 長いプレフィックスが優先されます (`sk-ant-api03-XyZ` はプレフィックス全体を残して本文だけ伏せる)
 - 伏せ字は空白・クォートなどの記号で止まります (`sk-abc def` の `def` はそのまま)
-- キー内部の区切り (`-`, `_`) を挟んでも伏せ字は継続します (`sk-ant-api03-XyZ` は全体が伏せ字)
+- キー内部の区切り (`-`, `_`) を挟んでも伏せ字は継続します (`xoxb-1234-5678-abc` は全体が伏せ字)
+- ドット区切り (`ya29.a0Af...`, `dp.st....`) は最初の区間だけが伏せ字になります
+- PEM ヘッダは末尾の `-----` だけが伏せ字になります (base64 本文は行をまたぐため対象外)
+- `re_` や `pa-` のような短いプレフィックスは一般語にも当たります (`re_runner` は伏せ字)
 - あくまで描画だけの変化です。コピーしたテキストは元のままなので、貼り付け先には正しいキーが入ります
+
+プレフィックスの一覧は `src/fonttools_/mask.py` のデータテーブル
+(`HYPHEN_PREFIXES` / `UNDERSCORE_PREFIXES` / `DOT_PREFIXES` / `CONTEXT_KEYS` / `PEM_HEADERS`)
+にまとまっています。追加したいプロバイダーがあれば、そこに 1 行足すだけで反映されます。
 
 仕組みは OpenType の `calt` (Contextual Alternates) フィーチャーを 1 つ追加しているだけで、
 既存のフィーチャーやグリフには一切手を加えていません (追加グリフは `mask.dot` の 1 つだけ)。
