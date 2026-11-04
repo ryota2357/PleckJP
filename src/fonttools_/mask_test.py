@@ -121,6 +121,19 @@ MASKED_CASES = [
     ("config['API_TOKEN'] = '7MMVuQhABCDEF'", "config['API_TOKEN'] = '•••••••••••••'"),
     ('cfg["SECRET"] = "abcdefgh"', 'cfg["SECRET"] = "••••••••"'),
     ("cfg['SECRET'] = 'abcdefgh'", "cfg['SECRET'] = '••••••••'"),
+    # キー名自体がクォートされた JSON / dict 形式
+    (
+        '"api_key": "DfXtE8h7VFL76snkPR3CAKKHRNMN"',
+        '"api_key": "••••••••••••••••••••••••••••"',
+    ),
+    (
+        "'api_key': 'DfXtE8h7VFL76snkPR3CAKKHRNMN'",
+        "'api_key': '••••••••••••••••••••••••••••'",
+    ),
+    ('"password": \'hunter2\'', '"password": \'•••••••\''),
+    ('"token":"abcdefgh"', '"token":"••••••••"'),
+    ("'secret':'abcdefgh'", "'secret':'••••••••'"),
+    ('"API_KEY": "abcdefgh"', '"API_KEY": "••••••••"'),
     # Airtable / JWT (ドットをはさんでも継続する)
     ("patABCDEFGHIJKLMN.1234567890abcdef", "pat••••••••••••••.••••••••••••••••"),
     ("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIx", "eyJ•••••••••••••••••.••••••••••••"),
@@ -169,6 +182,11 @@ UNMASKED_CASES = [
     # 連想配列のキーがシークレット名でなければ伏せない
     'config["timeout"] = "30"',
     'config["label"] = "main"',
+    # クォートされたキーでもシークレット名でなければ伏せない
+    '"timeout": "30"',
+    '"label": "main"',
+    '"username": "admin"',
+    '"PUBKEY": "abc"',
     # ガードを満たさない短い base64 プレフィックス
     "LS0tLS1CRUdJTi",
     "AKIA",

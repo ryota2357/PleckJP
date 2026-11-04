@@ -7,13 +7,14 @@
 伏せ字の対象は、下のデータテーブルに並ぶプレフィックスの直後に続く英数字の連続。
 テーブルの出発点は ObelMonoMasked-Regular.ttf の GSUB (ccmp の ChainContextSubst) から
 抽出した全プレフィックスで、そこへ PleckJP 側で不足していたものを追加している
-(現在 207 プレフィックス + 847 の代入コンテキスト)。
+(現在 207 プレフィックス + 1309 の代入コンテキスト = 77 キー × 17 テンプレート)。
 
     sk-ant-api03-XXXX   ->  sk-•••-•••••-••••
     ghp_abc123          ->  ghp_••••••
     cmVmdGtuOjAxOjE3NjU ->  cmVmdG••••••••••••
     LS0tLS1CRUdJTiBSU0E ->  LS0tLS1CRUdJTi•••••••
     config["TOKEN"] = "ab" ->  config["TOKEN"] = "••"
+    "api_key": "ab12"  ->  "api_key": "••••"
     xoxb-123-abc        ->  xoxb-•••-•••
     task-runner         ->  task-runner      (誤爆しない)
     oc_sk_abc123        ->  oc_sk_••••••
@@ -219,6 +220,14 @@ CONTEXT_TEMPLATES = (
     '\'"] = \'',
     "'\'] = \"",
     "'] = '",
+    # キー名自体がクォートされた JSON / dict 形式 (`"api_key": "..."`, `'api_key': '...'`)。
+    # 空白なしの `"api_key":"..."` (JSON.stringify の出力) も含める。
+    '": "',
+    "': '",
+    '": \'',
+    "': \"",
+    '":"',
+    "':'",
 )
 
 # mask.dot のアウトラインを借りる元グリフ (先頭から順に探す)

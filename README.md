@@ -88,8 +88,9 @@ make release
 代表的なプロバイダーの API キーを伏せ字で表示する `PleckJP Masked` ファミリーを生成できます。
 207 プレフィックス (OpenAI, Anthropic, GitHub, GitLab, Slack, Stripe, AWS, Google, Atlassian,
 Cloudflare, DigitalOcean, Datadog, npm, Vercel, Supabase, Sentry, Hugging Face, Airtable,
-Databricks, 1Password, PyPI, NuGet, JFrog, JWT, age, Bitcoin など) と、847 通りの代入コンテキスト
-(`KEY="..."`, `TOKEN=...`, `password: ...`, `--token=...`, `config["TOKEN"] = "..."` など)、
+Databricks, 1Password, PyPI, NuGet, JFrog, JWT, age, Bitcoin など) と、1309 通りの代入コンテキスト
+(`KEY="..."`, `TOKEN=...`, `password: ...`, `--token=...`, `config["TOKEN"] = "..."`,
+`"api_key": "..."` (JSON / dict のクォートされたキー) など)、
 HTTP ヘッダ (`Authorization: Bearer`)、
 URL / DSN の資格情報 (`postgres://user:pass@host`)、Telegram Bot Token、Discord Webhook、
 PEM ヘッダと、base64 で包んだ PEM / OpenSSH 秘密鍵に対応しています。
@@ -114,6 +115,7 @@ cmVmdGtuOjAxOjE3NjU0Njg1MjY6SlBoYWZ4  ->   cmVmdG••••••••••�
 LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQ==
                                       ->   LS0tLS1CRUdJTi••••••••••••••••••••••••••••==
 config["API_TOKEN"] = "7MMVuQhABCDEF" ->   config["API_TOKEN"] = "•••••••••••••"
+"api_key": "DfXtE8h7VFL76snkPR3CAKK"   ->   "api_key": "•••••••••••••••••••••••"
 ```
 
 - 伏せ字になるのは、対応プレフィックスの直後に続く英数字です (`oc_sk_...` のような `_sk_` 連結も対象)
