@@ -1,4 +1,5 @@
+.direnv/
 .cache/
 __pycache__/
 error.txt
-.direnv/
+web/dist/

@@ -23,13 +23,16 @@
         devShells.default = pkgs.mkShellNoCC {
           packages = with pkgs; [
             (python314.withPackages (p: [
+              p.brotli
               p.fontforge
               p.fonttools
               p.numpy
             ]))
             gnused
+            nodejs
             zip
             coreutils
+            curl
             nil
             pyright
           ];

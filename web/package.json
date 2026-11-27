@@ -1,0 +1,31 @@
+{
+  "name": "pleckjp",
+  "version": "0.0.0-dev",
+  "description": "Japanese Programming Web Fonts (Hack + IBM Plex Sans JP + Nerd Fonts)",
+  "keywords": [
+    "font",
+    "webfont",
+    "woff2",
+    "japanese",
+    "monospace",
+    "programming-font",
+    "nerd-fonts"
+  ],
+  "homepage": "https://github.com/ryota2357/PleckJP",
+  "bugs": "https://github.com/ryota2357/PleckJP/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryota2357/PleckJP.git",
+    "directory": "web"
+  },
+  "license": "OFL-1.1",
+  "author": "ryota2357",
+  "files": [
+    "dist"
+  ],
+  "style": "dist/pleckjp.css",
+  "scripts": {
+    "build": "rm -rf dist && mkdir dist && python3 split.py dist ../build/PleckJP-*.ttf && cp ../LICENSE dist/",
+    "fetch-nam-files": "cd nam-files && url=https://raw.githubusercontent.com/googlefonts/nam-files/$(cat rev) && curl -fsSL -O $url/LICENSE -O $url/slices/japanese_default.txt"
+  }
+}

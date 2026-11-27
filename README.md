@@ -36,6 +36,20 @@ inputs.nur = {
 nur.repos.ryota2357.pleckjp-font
 ```
 
+## Web フォント
+
+Web フォント版を npm パッケージ [`pleckjp`](https://www.npmjs.com/package/pleckjp) として公開しています。
+jsDelivr などの CDN から、次のように使えます。
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pleckjp@2/dist/pleckjp.css">
+<style>
+  pre, code { font-family: "PleckJP", monospace; }
+</style>
+```
+
+詳しくは [web/README.md](./web/README.md) を確認してください。
+
 ## スクリーンショット
 
 ![code-cpp-rust](./images/code-cpp-rust.png)
@@ -61,6 +75,13 @@ make
 
 ビルドが完了すると `build/` ディレクトリに ttf ファイルが生成されます。
 より詳しくは [HowToBuild.md](./HowToBuild.md) を確認してください。
+
+Web フォントは `build/` の ttf ファイルから次のコマンドにより `web/dist/` に生成されます。
+
+```sh
+cd web
+npm run build
+```
 
 <details>
 <summary>リリースの方法</summary>
