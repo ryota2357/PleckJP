@@ -1,0 +1,110 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: cachix/install-nix-action@382a9ed9481c7c1f94f68b72ef105b3417c73877 # v32.1.0
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check that the committed files match the tag
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          font_version="$(python3 -c 'import src.fontforge_.properties as p; print(p.VERSION)')"
+          if [ "$font_version" != "$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match VERSION ($font_version) in src/fontforge_/properties.py"
+            exit 1
+          fi
+          if ! printf '%s  %s\n' "$(cat "build/PleckJP_v$version.sha256")" "build/PleckJP_v$version.zip" | sha256sum -c -; then
+            echo "::error::build/PleckJP_v$version.zip does not match build/PleckJP_v$version.sha256"
+            exit 1
+          fi
+
+      - name: Extract the release notes
+        run: |
+          awk -v heading="## $GITHUB_REF_NAME " '
+            index($0, heading) == 1 { found = 1; next }
+            found && /^## / { exit }
+            found { print }
+          ' RELEASE_NOTES.md > release-notes.md
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            echo "::error::No section for $GITHUB_REF_NAME in RELEASE_NOTES.md"
+            exit 1
+          fi
+
+      - name: Generate the web font
+        working-directory: web
+        run: |
+          nix develop .. --command npm run build
+          nix develop .. --command npm pkg set version="${GITHUB_REF_NAME#v}"
+          cd dist && zip -qr "../../PleckJP-web_$GITHUB_REF_NAME.zip" .
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release
+          path: |
+            release-notes.md
+            build/PleckJP_v*.zip
+            PleckJP-web_v*.zip
+            web/package.json
+            web/README.md
+            web/dist/
+          if-no-files-found: error
+
+  github-release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release
+
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          gh release create "$GITHUB_REF_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file release-notes.md \
+            "build/PleckJP_v$version.zip" \
+            "PleckJP-web_v$version.zip"
+
+  npm:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+
+      - name: Download Artifact
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release
+
+      - name: Stage the npm package
+        working-directory: web
+        run: npm stage publish

@@ -102,6 +102,11 @@ make release
 
 ビルドが完了すると `build/` ディレクトリに .ttf, .zip, .sha256 ファイルが生成されます。
 
+続いて、`RELEASE_NOTES.md` に `## v<version> (<date>)` の節を追加してコミットし、タグを付けて push します。
+これにより、GitHub Actions にて Web フォントの生成や GitHub Release の作成が行われます。
+
+Web フォントは npm パッケージとしてステージングまで行われます。npmjs.com で承認して公開してください。
+
 </details>
 
 ## ライセンス

@@ -42,7 +42,10 @@
           programs = {
             black.enable = true;
             nixfmt.enable = true;
-            yamlfmt.enable = true;
+            yamlfmt = {
+              enable = true;
+              settings.formatter.retain_line_breaks = true;
+            };
           };
           settings.global.excludes = [
             ".envrc"
