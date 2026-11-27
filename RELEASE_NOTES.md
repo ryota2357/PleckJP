@@ -1,5 +1,13 @@
 # Release Notes
 
+## v2.3.0 (2026-11-27)
+
+- Web フォント版の配布を開始しました。
+  - GitHub Release に `PleckJP-web_v2.3.0.zip` を追加したほか、npm パッケージ [`pleckjp`](https://www.npmjs.com/package/pleckjp) (および jsDelivr などの CDN) からも利用できます。詳しくは [web/README.md](https://github.com/ryota2357/PleckJP/blob/v2.3.0/web/README.md) を確認してください。
+- グリフに変更はありません。
+
+**Full Changelog**: [v2.2.1...v2.3.0](https://github.com/ryota2357/PleckJP/compare/v2.2.1...v2.3.0)
+
 ## v2.2.1 (2026-08-27)
 
 - NerdFonts 由来のグリフ F533 (oct-bookmark_slash) が欠落していたのを修正しました。
